@@ -4,6 +4,8 @@ if nginx -V 2>&1 | grep -q ubus; then
 	if [ -z "$(cat /etc/nginx/conf.d/luci.locations | grep ubus)" ]; then
 		cat <<EOT >> /etc/nginx/conf.d/luci.locations
 
+load_module /usr/modules/ngx_http_ubus_module.so;
+
 location /ubus {
         ubus_interpreter;
         ubus_socket_path /var/run/ubus/ubus.sock;

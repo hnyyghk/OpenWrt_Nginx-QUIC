@@ -15,12 +15,13 @@ config NGINX_DAV
 		Enable the HTTP and WebDAV methods PUT, DELETE, MKCOL, COPY and MOVE.
 	default n
 
+config NGINX_DAV_EXT
+	bool
+	default n
+
 config NGINX_UBUS
 	bool
-	prompt "Enable UBUS module"
-	help
-		Enable UBUS api support directly from the server.
-	default y
+	default n
 
 config NGINX_FLV
 	bool
@@ -189,12 +190,10 @@ config NGINX_PCRE
 
 config NGINX_NAXSI
 	bool
-	prompt "Enable NAXSI module"
-	default y
+	default n
 
 config NGINX_LUA
 	bool
-	prompt "Enable Lua module"
 	default n
 
 config NGINX_HTTP_REAL_IP
@@ -214,16 +213,10 @@ config NGINX_HTTP_SUB
 	
 config NGINX_HEADERS_MORE
 	bool
-	prompt "Enable Headers_more module"
-	help
-		Set and clear input and output headers...more than "add"!
-	default y
+	default n
 	
 config NGINX_HTTP_BROTLI
 	bool
-	prompt "Enable Brotli compression module"
-	help
-		Add support for brotli compression module.
 	default n
 
 config NGINX_STREAM_CORE_MODULE
@@ -251,17 +244,10 @@ config NGINX_STREAM_SSL_PREREAD_MODULE
 
 config NGINX_RTMP_MODULE
 	bool
-	prompt "Enable RTMP module"
-	help
-		Add support for NGINX-based Media Streaming Server module.
-		DASH enhanced - https://github.com/ut0mt8/nginx-rtmp-module
 	default n
 
 config NGINX_TS_MODULE
 	bool
-	prompt "Enable TS module"
-	help
-		Add support for MPEG-TS Live Module module.
 	default n
 
 endmenu
