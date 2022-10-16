@@ -183,6 +183,11 @@ config NGINX_HTTP_V2
 	prompt "Enable HTTP_V2 module"
 	default y
 
+config NGINX_HTTP_V3
+	bool
+	prompt "Enable HTTP_V3 module"
+	default y
+
 config NGINX_PCRE
 	bool
 	prompt "Enable PCRE library usage"
@@ -240,6 +245,14 @@ config NGINX_STREAM_SSL_PREREAD_MODULE
 	select NGINX_STREAM_CORE_MODULE
 	help
 		Add support for NGINX request streaming using information from the ClientHello message without terminating SSL/TLS.
+	default n
+
+config NGINX_STREAM_QUIC_MODULE
+	bool
+	prompt "Enable stream support with QUIC termination"
+	select NGINX_STREAM_CORE_MODULE
+	help
+		Add support for NGINX request streaming with QUIC termination.
 	default n
 
 config NGINX_RTMP_MODULE

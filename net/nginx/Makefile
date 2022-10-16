@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=nginx
-PKG_VERSION:=1.21.3
-PKG_RELEASE:=3
+PKG_VERSION:=1.23.1
+PKG_RELEASE:=1
 
-PKG_SOURCE:=nginx-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://nginx.org/download/
-PKG_HASH:=14774aae0d151da350417efc4afda5cce5035056e71894836797e1f6e2d1175a
+PKG_SOURCE:=28fc35b71d75.tar.gz
+PKG_SOURCE_URL:=https://hg.nginx.org/nginx-quic/archive/
+PKG_HASH:=skip
 
 PKG_MAINTAINER:=Thomas Heil <heil@terminal-consulting.de> \
 				Ansuel Smith <ansuelsmth@gmail.com>
@@ -60,6 +60,7 @@ PKG_CONFIG_DEPENDS := \
 	CONFIG_NGINX_HTTP_UPSTREAM_ZONE \
 	CONFIG_NGINX_HTTP_CACHE \
 	CONFIG_NGINX_HTTP_V2 \
+	CONFIG_NGINX_HTTP_V3 \
 	CONFIG_NGINX_PCRE \
 	CONFIG_NGINX_NAXSI \
 	CONFIG_NGINX_LUA \
@@ -70,6 +71,7 @@ PKG_CONFIG_DEPENDS := \
 	CONFIG_NGINX_STREAM_CORE_MODULE \
 	CONFIG_NGINX_STREAM_SSL_MODULE \
 	CONFIG_NGINX_STREAM_SSL_PREREAD_MODULE \
+	CONFIG_NGINX_STREAM_QUIC_MODULE \
 	CONFIG_NGINX_RTMP_MODULE \
 	CONFIG_NGINX_TS_MODULE \
 	CONFIG_OPENSSL_ENGINE \
@@ -299,6 +301,9 @@ ifneq ($(BUILD_VARIANT),all-module)
   ifeq ($(CONFIG_NGINX_HTTP_V2),y)
     ADDITIONAL_MODULES += --with-http_v2_module
   endif
+  ifeq ($(CONFIG_NGINX_HTTP_V3),y)
+    ADDITIONAL_MODULES += --with-http_v3_module
+  endif
   ifeq ($(CONFIG_NGINX_HTTP_REAL_IP),y)
     ADDITIONAL_MODULES += --with-http_realip_module
   endif
@@ -314,12 +319,15 @@ ifneq ($(BUILD_VARIANT),all-module)
   ifeq ($(CONFIG_NGINX_STREAM_SSL_PREREAD_MODULE),y)
     ADDITIONAL_MODULES += --with-stream_ssl_preread_module
   endif
+  ifeq ($(CONFIG_NGINX_STREAM_QUIC_MODULE),y)
+    ADDITIONAL_MODULES += --with-stream_quic_module
+  endif
 else
   ADDITIONAL_MODULES += --with-ipv6 --with-http_stub_status_module --with-http_flv_module \
 	--with-http_dav_module \
-	--with-http_gzip_static_module --with-http_auth_request_module --with-http_v2_module --with-http_realip_module \
+	--with-http_gzip_static_module --with-http_auth_request_module --with-http_v2_module --with-http_v3_module --with-http_realip_module \
 	--with-http_secure_link_module --with-http_sub_module \
-	--with-stream_ssl_module --with-stream_ssl_preread_module
+	--with-stream_ssl_module --with-stream_ssl_preread_module --with-stream_quic_module
   config_files += koi-utf koi-win win-utf fastcgi_params uwsgi_params scgi_params
 endif
 
