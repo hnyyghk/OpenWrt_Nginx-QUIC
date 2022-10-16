@@ -85,8 +85,7 @@ define Package/nginx/Default
   TITLE:=Nginx web server
   URL:=http://nginx.org/
   DEPENDS:=+libopenssl +libpthread
-  # TODO: add PROVIDES when removing nginx
-  # PROVIDES:=nginx
+  PROVIDES:=nginx
 endef
 
 define Package/nginx/description
@@ -357,8 +356,7 @@ define Package/nginx-mod-luci
   TITLE:=Support file for Nginx
   URL:=http://nginx.org/
   DEPENDS:=+uwsgi +uwsgi-luci-support +nginx +nginx-mod-ubus
-  # TODO: add PROVIDES when removing nginx-mod-luci-ssl
-  # PROVIDES:=nginx-mod-luci-ssl
+  PROVIDES:=nginx-mod-luci-ssl
 endef
 
 define Package/nginx-mod-luci/description
@@ -617,22 +615,6 @@ $(eval $(call BuildPackage,nginx-ssl))
 $(eval $(call BuildPackage,nginx-all-module))
 $(eval $(call BuildPackage,nginx-mod-luci))
 
-# TODO: remove after a transition period (together with pkg nginx-util):
-# It is for smoothly substituting nginx and nginx-mod-luci-ssl (by nginx-ssl
-# respectively nginx-mod-luci). Add above commented PROVIDES when removing.
-
-define Package/nginx
-  TITLE:=Dummy package for transition when upgrading.
-  DEPENDS:=+nginx-ssl
-  PKGARCH:=all
-endef
-
-define Package/nginx/install
-	$(INSTALL_DIR) $(1)/usr/bin
-endef
-
-$(eval $(call BuildPackage,nginx))
-
 define InstallModule
   define Package/$(1)/install
 	$(INSTALL_DIR) $$(1)/usr/modules
@@ -658,15 +640,3 @@ define Package/nginx-mod-brotli/install
 endef
 
 $(eval $(call BuildPackage,nginx-mod-brotli))
-
-define Package/nginx-mod-luci-ssl
-  TITLE:=Dummy package for transition when upgrading.
-  DEPENDS:=+nginx-mod-luci
-  PKGARCH:=all
-endef
-
-define Package/nginx-mod-luci-ssl/install
-	$(INSTALL_DIR) $(1)/usr/bin
-endef
-
-$(eval $(call BuildPackage,nginx-mod-luci-ssl))
