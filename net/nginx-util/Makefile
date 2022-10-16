@@ -75,6 +75,7 @@ endef
 define Package/nginx-ssl-util/install
 	$(call Package/nginx-ssl-util/install/default, $(1))
 	$(INSTALL_DIR) $(1)/usr/bin
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/nginx-ssl-util $(PKG_BUILD_DIR)/nginx-util
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/nginx-ssl-util $(1)/usr/bin/nginx-util
 endef
 
@@ -82,6 +83,7 @@ endef
 define Package/nginx-ssl-util-nopcre/install
 	$(call Package/nginx-ssl-util/install/default, $(1))
 	$(INSTALL_DIR) $(1)/usr/bin
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/nginx-ssl-util-nopcre $(PKG_BUILD_DIR)/nginx-util
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/nginx-ssl-util-nopcre \
 		$(1)/usr/bin/nginx-util
 endef
