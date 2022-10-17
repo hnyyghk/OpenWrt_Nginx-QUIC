@@ -638,27 +638,22 @@ $(eval $(call BuildPackage,nginx-all-module))
 $(eval $(call BuildPackage,nginx-mod-luci))
 
 define InstallModule
-  define Package/$(1)/install
+  define Package/nginx-mod-$(1)/install
 	$(INSTALL_DIR) $$(1)/usr/modules
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/modules/$(2)_module.so $$(1)/usr/modules/
+	for so in $(2) ; do \
+		$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/modules/$$$$$$$$so $$(1)/usr/modules/ ; \
+	done
   endef
 
-  $$(eval $$(call BuildPackage,$(1)))
+  $$(eval $$(call BuildPackage,nginx-mod-$(1)))
 endef
 
-$(eval $(call InstallModule,nginx-mod-lua,ngx_http_lua))
-$(eval $(call InstallModule,nginx-mod-stream,ngx_stream))
-$(eval $(call InstallModule,nginx-mod-ubus,ngx_http_ubus))
-$(eval $(call InstallModule,nginx-mod-dav-ext,ngx_http_dav_ext))
-$(eval $(call InstallModule,nginx-mod-naxsi,ngx_http_naxsi))
-$(eval $(call InstallModule,nginx-mod-headers-more,ngx_http_headers_more_filter))
-$(eval $(call InstallModule,nginx-mod-rtmp,ngx_rtmp))
-$(eval $(call InstallModule,nginx-mod-ts,ngx_http_ts))
-
-define Package/nginx-mod-brotli/install
-	$(INSTALL_DIR) $(1)/usr/modules
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/modules/ngx_http_brotli_filter_module.so $(1)/usr/modules/
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/modules/ngx_http_brotli_static_module.so $(1)/usr/modules/
-endef
-
-$(eval $(call BuildPackage,nginx-mod-brotli))
+$(eval $(call InstallModule,lua,ngx_http_lua_module.so))
+$(eval $(call InstallModule,stream,ngx_stream_module.so))
+$(eval $(call InstallModule,ubus,ngx_http_ubus_module.so))
+$(eval $(call InstallModule,dav-ext,ngx_http_dav_ext_module.so))
+$(eval $(call InstallModule,naxsi,ngx_http_naxsi_module.so))
+$(eval $(call InstallModule,headers-more,ngx_http_headers_more_filter_module.so))
+$(eval $(call InstallModule,brotli,ngx_http_brotli_filter_module.so ngx_http_brotli_static_module.so))
+$(eval $(call InstallModule,rtmp,ngx_rtmp_module.so))
+$(eval $(call InstallModule,ts,ngx_http_ts_module.so))
