@@ -446,11 +446,11 @@ endef
 Package/nginx-all-module/prerm = $(Package/nginx-ssl/prerm)
 
 define Download/nginx-headers-more
-  VERSION:=a9f7c7e86cc7441d04e2f11f01c2e3a9c4b0301d
+  VERSION:=bea1be3bbf6af28f6aa8cf0c01c07ee1637e2bd0
   SUBDIR:=nginx-headers-more
   FILE:=headers-more-nginx-module-$$(VERSION).tar.xz
   URL:=https://github.com/openresty/headers-more-nginx-module.git
-  MIRROR_HASH:=ce0b9996ecb2cff790831644d6ab1adc087aa2771d77d3931c06246d11bc59fd
+  MIRROR_HASH:=skip
   PROTO:=git
 endef
 
