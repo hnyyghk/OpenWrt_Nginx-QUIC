@@ -308,6 +308,12 @@ ifneq ($(BUILD_VARIANT),all-module)
   ifeq ($(CONFIG_NGINX_HTTP_SUB),y)
 	ADDITIONAL_MODULES += --with-http_sub_module
   endif
+  ifeq ($(CONFIG_NGINX_STREAM_SSL_MODULE),y)
+    ADDITIONAL_MODULES += --with-stream_ssl_module
+  endif
+  ifeq ($(CONFIG_NGINX_STREAM_SSL_PREREAD_MODULE),y)
+    ADDITIONAL_MODULES += --with-stream_ssl_preread_module
+  endif
 else
   ADDITIONAL_MODULES += --with-ipv6 --with-http_stub_status_module --with-http_flv_module \
 	--with-http_dav_module \
@@ -327,7 +333,7 @@ ifeq ($(CONFIG_NGINX_DAV_EXT),y)
   ADDITIONAL_MODULES += --add-dynamic-module=$(PKG_BUILD_DIR)/nginx-dav-ext-module
 endif
 ifeq ($(CONFIG_NGINX_STREAM_CORE_MODULE),y)
-  ADDITIONAL_MODULES += --with-stream=dynamic --with-stream_ssl_module --with-stream_ssl_preread_module
+  ADDITIONAL_MODULES += --with-stream=dynamic
 endif
 ifeq ($(CONFIG_NGINX_UBUS),y)
   ADDITIONAL_MODULES += --add-dynamic-module=$(PKG_BUILD_DIR)/nginx-ubus-module

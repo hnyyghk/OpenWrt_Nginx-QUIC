@@ -229,7 +229,7 @@ config NGINX_STREAM_CORE_MODULE
 config NGINX_STREAM_SSL_MODULE
 	bool
 	prompt "Enable stream support with SSL/TLS termination"
-	depends on NGINX_STREAM_CORE_MODULE
+	select NGINX_STREAM_CORE_MODULE
 	help
 		Add support for NGINX request streaming with SSL/TLS termination.
 	default n
@@ -237,7 +237,7 @@ config NGINX_STREAM_SSL_MODULE
 config NGINX_STREAM_SSL_PREREAD_MODULE
 	bool
 	prompt "Enable stream support with SSL/TLS pre-read"
-	depends on NGINX_STREAM_CORE_MODULE
+	select NGINX_STREAM_CORE_MODULE
 	help
 		Add support for NGINX request streaming using information from the ClientHello message without terminating SSL/TLS.
 	default n
