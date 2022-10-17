@@ -284,6 +284,9 @@ ifneq ($(BUILD_VARIANT),all-module)
   ifneq ($(CONFIG_NGINX_HTTP_UPSTREAM_KEEPALIVE),y)
     ADDITIONAL_MODULES += --without-http_upstream_keepalive_module
   endif
+  ifneq ($(CONFIG_NGINX_HTTP_UPSTREAM_ZONE),y)
+    ADDITIONAL_MODULES += --without-http_upstream_zone_module
+  endif
   ifeq ($(CONFIG_IPV6),y)
     ADDITIONAL_MODULES += --with-ipv6
   endif
@@ -408,8 +411,7 @@ CONFIGURE_ARGS += \
 			--http-fastcgi-temp-path=/var/lib/nginx/fastcgi \
 			--with-cc="$(TARGET_CC)" \
 			--with-cc-opt="$(TARGET_CPPFLAGS) $(TARGET_CFLAGS)" \
-			--without-pcre2 --with-ld-opt="$(TARGET_LDFLAGS)" \
-			--without-http_upstream_zone_module
+			--without-pcre2 --with-ld-opt="$(TARGET_LDFLAGS)"
 
 define Package/nginx-mod-luci/install
 	$(INSTALL_DIR) $(1)/etc/nginx/conf.d

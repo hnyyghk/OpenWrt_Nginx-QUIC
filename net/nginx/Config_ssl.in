@@ -162,22 +162,27 @@ config NGINX_HTTP_BROWSER
 
 config NGINX_HTTP_UPSTREAM_HASH
 	bool
-	prompt "Enable HTTP hash module"
+	prompt "Enable HTTP upstream hash module"
 	default y
 
 config NGINX_HTTP_UPSTREAM_IP_HASH
 	bool
-	prompt "Enable HTTP IP hash module"
+	prompt "Enable HTTP upstream IP hash module"
 	default y
 
 config NGINX_HTTP_UPSTREAM_LEAST_CONN
 	bool
-	prompt "Enable HTTP least conn module"
+	prompt "Enable HTTP upstream least conn module"
 	default y
 
 config NGINX_HTTP_UPSTREAM_KEEPALIVE
 	bool
-	prompt "Enable HTTP keepalive module"
+	prompt "Enable HTTP upstream keepalive module"
+	default y
+
+config NGINX_HTTP_UPSTREAM_ZONE
+	bool
+	prompt "Enable HTTP upstream zone module"
 	default y
 
 config NGINX_HTTP_CACHE
