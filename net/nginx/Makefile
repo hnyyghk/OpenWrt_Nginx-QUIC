@@ -314,7 +314,7 @@ else
 	--with-http_auth_request_module --with-http_v2_module --with-http_realip_module \
 	--with-http_secure_link_module --with-http_sub_module \
 	--with-stream_ssl_module --with-stream_ssl_preread_module
-  config_files += koi-utf koi-win win-utf fastcgi_params uwsgi_params
+  config_files += koi-utf koi-win win-utf fastcgi_params uwsgi_params scgi_params
 endif
 
 ifeq ($(CONFIG_NGINX_NAXSI),y)
