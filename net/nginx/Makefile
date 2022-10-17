@@ -48,6 +48,7 @@ PKG_MOD_PATCHED := $(shell find patches -mindepth 1 -maxdepth 1 -type d -name 'n
 PKG_CONFIG_DEPENDS := \
 	CONFIG_NGINX_DAV \
 	CONFIG_NGINX_FLV \
+	CONFIG_NGINX_MP4 \
 	CONFIG_NGINX_STUB_STATUS \
 	CONFIG_NGINX_HTTP_CHARSET \
 	CONFIG_NGINX_HTTP_GZIP \
@@ -470,6 +471,7 @@ CONFIGURE_ARGS += \
 	$(if $(call IsEnabled,NGINX_STUB_STATUS),--with-http_stub_status_module) \
 	$(if $(call IsEnabled,NGINX_FLV),--with-http_flv_module) \
 	$(if $(call IsEnabled,NGINX_DAV),--with-http_dav_module) \
+	$(if $(call IsEnabled,NGINX_MP4),--with-http_mp4_module) \
 	$(if $(call IsEnabled,NGINX_HTTP_AUTH_REQUEST),--with-http_auth_request_module) \
 	$(if $(call IsEnabled,NGINX_HTTP_QUIC),--with-http_v3_module) \
 	$(if $(call IsEnabled,NGINX_HTTP_V2),--with-http_v2_module) \

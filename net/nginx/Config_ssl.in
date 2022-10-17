@@ -22,6 +22,13 @@ config NGINX_FLV
 		Provides the ability to seek within FLV (Flash) files using time-based offsets.
 	default n
 
+config NGINX_MP4
+	bool
+	prompt "Enable MP4 module"
+	help
+		Provides pseudo-streaming server-side support for MP4 files. Such files typically have the .mp4, .m4v, or .m4a filename extensions.
+	default n
+
 config NGINX_STUB_STATUS
 	bool
 	prompt "Enable stub status module"
