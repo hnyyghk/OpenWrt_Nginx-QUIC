@@ -436,7 +436,6 @@ CONFIGURE_ARGS += \
 	--http-fastcgi-temp-path=/var/lib/nginx/fastcgi \
 	--with-cc="$(TARGET_CC)" \
 	--with-ld-opt="$(TARGET_LDFLAGS)" \
-	--without-http_upstream_zone_module \
 	--with-compat \
 	--with-http_ssl_module \
 	$(if $(call IsDisabled,NGINX_HTTP_CACHE),--without-http-cache) \
@@ -466,6 +465,7 @@ CONFIGURE_ARGS += \
 	$(if $(call IsDisabled,NGINX_HTTP_UPSTREAM_IP_HASH),--without-http_upstream_ip_hash_module) \
 	$(if $(call IsDisabled,NGINX_HTTP_UPSTREAM_LEAST_CONN),--without-http_upstream_least_conn_module) \
 	$(if $(call IsDisabled,NGINX_HTTP_UPSTREAM_KEEPALIVE),--without-http_upstream_keepalive_module) \
+	$(if $(call IsDisabled,NGINX_HTTP_UPSTREAM_ZONE),--without-http_upstream_zone_module) \
 	$(if $(call IsEnabled,IPV6),--with-ipv6) \
 	$(if $(call IsEnabled,NGINX_HTTP_GZIP_STATIC),--with-http_gzip_static_module) \
 	$(if $(call IsEnabled,NGINX_STUB_STATUS),--with-http_stub_status_module) \

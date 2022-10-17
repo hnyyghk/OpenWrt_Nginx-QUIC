@@ -172,6 +172,11 @@ config NGINX_HTTP_UPSTREAM_KEEPALIVE
 	prompt "Enable HTTP keepalive module"
 	default y
 
+config NGINX_HTTP_UPSTREAM_ZONE
+	bool
+	prompt "Enable HTTP zone module"
+	default y
+
 config NGINX_HTTP_CACHE
 	bool
 	prompt "Enable HTTP cache"
