@@ -28,6 +28,7 @@ PKG_CONFIG_DEPENDS := \
 	CONFIG_NGINX_DAV \
 	CONFIG_NGINX_DAV_EXT \
 	CONFIG_NGINX_FLV \
+	CONFIG_NGINX_MP4 \
 	CONFIG_NGINX_UBUS \
 	CONFIG_NGINX_STUB_STATUS \
 	CONFIG_NGINX_HTTP_CHARSET \
@@ -292,6 +293,9 @@ ifneq ($(BUILD_VARIANT),all-module)
   ifeq ($(CONFIG_NGINX_FLV),y)
     ADDITIONAL_MODULES += --with-http_flv_module
   endif
+  ifeq ($(CONFIG_NGINX_MP4),y)
+    ADDITIONAL_MODULES += --with-http_mp4_module
+  endif
   ifeq ($(CONFIG_NGINX_DAV),y)
     ADDITIONAL_MODULES += --with-http_dav_module
   endif
@@ -323,7 +327,7 @@ ifneq ($(BUILD_VARIANT),all-module)
     ADDITIONAL_MODULES += --with-stream_quic_module
   endif
 else
-  ADDITIONAL_MODULES += --with-ipv6 --with-http_stub_status_module --with-http_flv_module \
+  ADDITIONAL_MODULES += --with-ipv6 --with-http_stub_status_module --with-http_flv_module --with-http_mp4_module \
 	--with-http_dav_module \
 	--with-http_gzip_static_module --with-http_auth_request_module --with-http_v2_module --with-http_v3_module --with-http_realip_module \
 	--with-http_secure_link_module --with-http_sub_module \
