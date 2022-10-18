@@ -130,8 +130,6 @@ define Package/nginx-ssl/config
   source "$(SOURCE)/Config_ssl.in"
 endef
 
-config_files=mime.types
-
 define Package/nginx/conffiles
 /etc/nginx/
 endef
@@ -139,57 +137,8 @@ endef
 Package/nginx-ssl/conffiles = $(Package/nginx/conffiles)
 Package/nginx-all-module/conffiles = $(Package/nginx/conffiles)
 
-define Package/nginx/Module
-$(call Package/nginx/Default)
-  DEPENDS:=nginx-ssl $(1)
-endef
-
-define Package/nginx-mod-ubus
-$(call Package/nginx/Module, +libubus +libjson-c +libblobmsg-json +@NGINX_UBUS)
-  TITLE:=Nginx Ubus module
-endef
-
-define Package/nginx-mod-naxsi
-$(call Package/nginx/Module, +@NGINX_NAXSI)
-  TITLE:=Nginx NAXSI module
-endef
-
-define Package/nginx-mod-lua
-$(call Package/nginx/Module, +liblua +@NGINX_LUA)
-  TITLE:=Nginx LUA module
-endef
-
-define Package/nginx-mod-dav-ext
-$(call Package/nginx/Module, +@NGINX_DAV +@NGINX_DAV_EXT)
-  TITLE:=Nginx DAV-EXT module
-endef
-
-define Package/nginx-mod-stream
-$(call Package/nginx/Module, +@NGINX_STREAM_CORE_MODULE)
-  TITLE:=Nginx stream module
-endef
-
-define Package/nginx-mod-headers-more
-$(call Package/nginx/Module, +@NGINX_HEADERS_MORE)
-  TITLE:=Nginx Headers More module
-endef
-
-define Package/nginx-mod-brotli
-$(call Package/nginx/Module, +@NGINX_HTTP_BROTLI)
-  TITLE:=Nginx Brotli module
-endef
-
-define Package/nginx-mod-rtmp
-$(call Package/nginx/Module, +@NGINX_RTMP_MODULE)
-  TITLE:=Nginx RTMP module
-endef
-
-define Package/nginx-mod-ts
-$(call Package/nginx/Module, +@NGINX_TS_MODULE)
-  TITLE:=Nginx TS module
-endef
-
 ADDITIONAL_MODULES:= --with-compat --with-http_ssl_module
+config_files=mime.types
 
 ifneq ($(BUILD_VARIANT),all-module)
   ifneq ($(CONFIG_NGINX_HTTP_CACHE),y)
@@ -637,10 +586,16 @@ $(eval $(call BuildPackage,nginx-ssl))
 $(eval $(call BuildPackage,nginx-all-module))
 $(eval $(call BuildPackage,nginx-mod-luci))
 
-define InstallModule
+define BuildModule
+  define Package/nginx-mod-$(1)
+    $(call Package/nginx/Default)
+    TITLE:=Nginx $(2) module
+    DEPENDS:=nginx-ssl $(3)
+  endef
+
   define Package/nginx-mod-$(1)/install
 	$(INSTALL_DIR) $$(1)/usr/modules
-	for so in $(2) ; do \
+	for so in $(4) ; do \
 		$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/modules/$$$$$$$$so $$(1)/usr/modules/ ; \
 	done
   endef
@@ -648,12 +603,12 @@ define InstallModule
   $$(eval $$(call BuildPackage,nginx-mod-$(1)))
 endef
 
-$(eval $(call InstallModule,lua,ngx_http_lua_module.so))
-$(eval $(call InstallModule,stream,ngx_stream_module.so))
-$(eval $(call InstallModule,ubus,ngx_http_ubus_module.so))
-$(eval $(call InstallModule,dav-ext,ngx_http_dav_ext_module.so))
-$(eval $(call InstallModule,naxsi,ngx_http_naxsi_module.so))
-$(eval $(call InstallModule,headers-more,ngx_http_headers_more_filter_module.so))
-$(eval $(call InstallModule,brotli,ngx_http_brotli_filter_module.so ngx_http_brotli_static_module.so))
-$(eval $(call InstallModule,rtmp,ngx_rtmp_module.so))
-$(eval $(call InstallModule,ts,ngx_http_ts_module.so))
+$(eval $(call BuildModule,stream,stream,+@NGINX_STREAM_CORE_MODULE,ngx_stream_module.so))
+$(eval $(call BuildModule,ubus,Ubus,+libubus +libblobmsg-json +libjson-c +@NGINX_UBUS,ngx_http_ubus_module.so))
+$(eval $(call BuildModule,naxsi,NAXSI,+@NGINX_NAXSI,ngx_http_naxsi_module.so))
+$(eval $(call BuildModule,lua,LUA,+liblua +@NGINX_LUA,ngx_http_lua_module.so))
+$(eval $(call BuildModule,dav-ext,DAV-EXT,+@NGINX_DAV +@NGINX_DAV_EXT,ngx_http_dav_ext_module.so))
+$(eval $(call BuildModule,headers-more,Headers More,+@NGINX_HEADERS_MORE,ngx_http_headers_more_filter_module.so))
+$(eval $(call BuildModule,brotli,Brotli,+@NGINX_HTTP_BROTLI,ngx_http_brotli_filter_module.so ngx_http_brotli_static_module.so))
+$(eval $(call BuildModule,rtmp,RTMP,+@NGINX_RTMP_MODULE,ngx_rtmp_module.so))
+$(eval $(call BuildModule,ts,TS,+@NGINX_TS_MODULE,ngx_http_ts_module.so))
