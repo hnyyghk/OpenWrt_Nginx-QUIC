@@ -590,7 +590,7 @@ define BuildModule
   define Package/nginx-mod-$(1)
     $(call Package/nginx/Default)
     TITLE:=Nginx $(2) module
-    DEPENDS:=nginx-ssl $(3)
+    DEPENDS:=$(3)
   endef
 
   define Package/nginx-mod-$(1)/install
