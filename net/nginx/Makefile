@@ -125,8 +125,47 @@ define Package/nginx-all-module
   TITLE += with ALL module selected
   VARIANT:=all-module
   DEPENDS += +@NGINX_DAV \
+	+@NGINX_FLV \
+	+@NGINX_MP4 \
+	+@NGINX_STUB_STATUS \
+	+@NGINX_HTTP_CHARSET \
 	+@NGINX_HTTP_GZIP \
+	+@NGINX_HTTP_GZIP_STATIC \
+	+@NGINX_HTTP_SSI \
+	+@NGINX_HTTP_USERID \
+	+@NGINX_HTTP_ACCESS \
+	+@NGINX_HTTP_AUTH_BASIC \
+	+@NGINX_HTTP_AUTH_REQUEST \
+	+@NGINX_HTTP_AUTOINDEX \
+	+@NGINX_HTTP_GEO \
+	+@NGINX_HTTP_MAP \
+	+@NGINX_HTTP_SPLIT_CLIENTS \
+	+@NGINX_HTTP_REFERER \
+	+@NGINX_HTTP_REWRITE \
+	+@NGINX_HTTP_PROXY \
+	+@NGINX_HTTP_FASTCGI \
+	+@NGINX_HTTP_UWSGI \
+	+@NGINX_HTTP_SCGI \
+	+@NGINX_HTTP_MEMCACHED \
+	+@NGINX_HTTP_LIMIT_CONN \
+	+@NGINX_HTTP_LIMIT_REQ \
+	+@NGINX_HTTP_EMPTY_GIF \
+	+@NGINX_HTTP_BROWSER \
+	+@NGINX_HTTP_UPSTREAM_HASH \
+	+@NGINX_HTTP_UPSTREAM_IP_HASH \
+	+@NGINX_HTTP_UPSTREAM_LEAST_CONN \
+	+@NGINX_HTTP_UPSTREAM_KEEPALIVE \
+	+@NGINX_HTTP_UPSTREAM_ZONE \
+	+@NGINX_HTTP_CACHE \
+	+@NGINX_HTTP_V2 \
+	+@NGINX_HTTP_V3 \
 	+@NGINX_PCRE \
+	+@NGINX_HTTP_REAL_IP \
+	+@NGINX_HTTP_SECURE_LINK \
+	+@NGINX_HTTP_SUB \
+	+@NGINX_STREAM_SSL_MODULE \
+	+@NGINX_STREAM_SSL_PREREAD_MODULE \
+	+@NGINX_STREAM_QUIC_MODULE \
 	+@NGINX_STREAM_CORE_MODULE \
 	+@NGINX_UBUS \
 	+@NGINX_NAXSI \
@@ -156,153 +195,143 @@ Package/nginx-all-module/conffiles = $(Package/nginx/conffiles)
 ADDITIONAL_MODULES:= --with-compat --with-http_ssl_module
 config_files=mime.types
 
-ifneq ($(BUILD_VARIANT),all-module)
-  ifeq ($(CONFIG_IPV6),y)
-    ADDITIONAL_MODULES += --with-ipv6
-  endif
-  ifeq ($(CONFIG_NGINX_DAV),y)
-    ADDITIONAL_MODULES += --with-http_dav_module
-  endif
-  ifeq ($(CONFIG_NGINX_FLV),y)
-    ADDITIONAL_MODULES += --with-http_flv_module
-  endif
-  ifeq ($(CONFIG_NGINX_MP4),y)
-    ADDITIONAL_MODULES += --with-http_mp4_module
-  endif
-  ifeq ($(CONFIG_NGINX_STUB_STATUS),y)
-    ADDITIONAL_MODULES += --with-http_stub_status_module
-  endif
-  ifneq ($(CONFIG_NGINX_HTTP_CHARSET),y)
-    ADDITIONAL_MODULES += --without-http_charset_module
-  else
-    config_files += koi-utf koi-win win-utf
-  endif
-  ifneq ($(CONFIG_NGINX_HTTP_GZIP),y)
-    ADDITIONAL_MODULES += --without-http_gzip_module
-  endif
-  ifeq ($(CONFIG_NGINX_HTTP_GZIP_STATIC),y)
-    ADDITIONAL_MODULES += --with-http_gzip_static_module
-  endif
-  ifneq ($(CONFIG_NGINX_HTTP_SSI),y)
-    ADDITIONAL_MODULES += --without-http_ssi_module
-  endif
-  ifneq ($(CONFIG_NGINX_HTTP_USERID),y)
-    ADDITIONAL_MODULES += --without-http_userid_module
-  endif
-  ifneq ($(CONFIG_NGINX_HTTP_ACCESS),y)
-    ADDITIONAL_MODULES += --without-http_access_module
-  endif
-  ifneq ($(CONFIG_NGINX_HTTP_AUTH_BASIC),y)
-    ADDITIONAL_MODULES += --without-http_auth_basic_module
-  endif
-  ifeq ($(CONFIG_NGINX_HTTP_AUTH_REQUEST),y)
-    ADDITIONAL_MODULES += --with-http_auth_request_module
-  endif
-  ifneq ($(CONFIG_NGINX_HTTP_AUTOINDEX),y)
-    ADDITIONAL_MODULES += --without-http_autoindex_module
-  endif
-  ifneq ($(CONFIG_NGINX_HTTP_GEO),y)
-    ADDITIONAL_MODULES += --without-http_geo_module
-  endif
-  ifneq ($(CONFIG_NGINX_HTTP_MAP),y)
-    ADDITIONAL_MODULES += --without-http_map_module
-  endif
-  ifneq ($(CONFIG_NGINX_HTTP_SPLIT_CLIENTS),y)
-    ADDITIONAL_MODULES += --without-http_split_clients_module
-  endif
-  ifneq ($(CONFIG_NGINX_HTTP_REFERER),y)
-    ADDITIONAL_MODULES += --without-http_referer_module
-  endif
-  ifneq ($(CONFIG_NGINX_HTTP_REWRITE),y)
-    ADDITIONAL_MODULES += --without-http_rewrite_module
-  endif
-  ifneq ($(CONFIG_NGINX_HTTP_PROXY),y)
-    ADDITIONAL_MODULES += --without-http_proxy_module
-  endif
-  ifneq ($(CONFIG_NGINX_HTTP_FASTCGI),y)
-    ADDITIONAL_MODULES += --without-http_fastcgi_module
-  else
-    config_files += fastcgi_params
-  endif
-  ifneq ($(CONFIG_NGINX_HTTP_UWSGI),y)
-    ADDITIONAL_MODULES += --without-http_uwsgi_module
-  else
-    config_files += uwsgi_params
-  endif
-  ifneq ($(CONFIG_NGINX_HTTP_SCGI),y)
-    ADDITIONAL_MODULES += --without-http_scgi_module
-  else
-    config_files += scgi_params
-  endif
-  ifneq ($(CONFIG_NGINX_HTTP_MEMCACHED),y)
-    ADDITIONAL_MODULES += --without-http_memcached_module
-  endif
-  ifneq ($(CONFIG_NGINX_HTTP_LIMIT_CONN),y)
-    ADDITIONAL_MODULES += --without-http_limit_conn_module
-  endif
-  ifneq ($(CONFIG_NGINX_HTTP_LIMIT_REQ),y)
-    ADDITIONAL_MODULES += --without-http_limit_req_module
-  endif
-  ifneq ($(CONFIG_NGINX_HTTP_EMPTY_GIF),y)
-    ADDITIONAL_MODULES += --without-http_empty_gif_module
-  endif
-  ifneq ($(CONFIG_NGINX_HTTP_BROWSER),y)
-    ADDITIONAL_MODULES += --without-http_browser_module
-  endif
-  ifneq ($(CONFIG_NGINX_HTTP_UPSTREAM_HASH),y)
-    ADDITIONAL_MODULES += --without-http_upstream_hash_module
-  endif
-  ifneq ($(CONFIG_NGINX_HTTP_UPSTREAM_IP_HASH),y)
-    ADDITIONAL_MODULES += --without-http_upstream_ip_hash_module
-  endif
-  ifneq ($(CONFIG_NGINX_HTTP_UPSTREAM_LEAST_CONN),y)
-    ADDITIONAL_MODULES += --without-http_upstream_least_conn_module
-  endif
-  ifneq ($(CONFIG_NGINX_HTTP_UPSTREAM_KEEPALIVE),y)
-    ADDITIONAL_MODULES += --without-http_upstream_keepalive_module
-  endif
-  ifneq ($(CONFIG_NGINX_HTTP_UPSTREAM_ZONE),y)
-    ADDITIONAL_MODULES += --without-http_upstream_zone_module
-  endif
-  ifneq ($(CONFIG_NGINX_HTTP_CACHE),y)
-    ADDITIONAL_MODULES += --without-http-cache
-  endif
-  ifeq ($(CONFIG_NGINX_HTTP_V2),y)
-    ADDITIONAL_MODULES += --with-http_v2_module
-  endif
-  ifeq ($(CONFIG_NGINX_HTTP_V3),y)
-    ADDITIONAL_MODULES += --with-http_v3_module
-  endif
-  ifneq ($(CONFIG_NGINX_PCRE),y)
-    ADDITIONAL_MODULES += --without-pcre
-  endif
-  ifeq ($(CONFIG_NGINX_HTTP_REAL_IP),y)
-    ADDITIONAL_MODULES += --with-http_realip_module
-  endif
-  ifeq ($(CONFIG_NGINX_HTTP_SECURE_LINK),y)
-    ADDITIONAL_MODULES += --with-http_secure_link_module
-  endif
-  ifeq ($(CONFIG_NGINX_HTTP_SUB),y)
-	ADDITIONAL_MODULES += --with-http_sub_module
-  endif
-  ifeq ($(CONFIG_NGINX_STREAM_SSL_MODULE),y)
-    ADDITIONAL_MODULES += --with-stream_ssl_module
-  endif
-  ifeq ($(CONFIG_NGINX_STREAM_SSL_PREREAD_MODULE),y)
-    ADDITIONAL_MODULES += --with-stream_ssl_preread_module
-  endif
-  ifeq ($(CONFIG_NGINX_STREAM_QUIC_MODULE),y)
-    ADDITIONAL_MODULES += --with-stream_quic_module
-  endif
-else
-  ADDITIONAL_MODULES += --with-ipv6 --with-http_dav_module \
-	--with-http_flv_module --with-http_mp4_module --with-http_stub_status_module \
-	--with-http_gzip_static_module --with-http_auth_request_module --with-http_v2_module --with-http_v3_module --with-http_realip_module \
-	--with-http_secure_link_module --with-http_sub_module \
-	--with-stream_ssl_module --with-stream_ssl_preread_module --with-stream_quic_module
-  config_files += koi-utf koi-win win-utf fastcgi_params uwsgi_params scgi_params
+ifeq ($(CONFIG_IPV6),y)
+  ADDITIONAL_MODULES += --with-ipv6
 endif
-
+ifeq ($(CONFIG_NGINX_DAV),y)
+  ADDITIONAL_MODULES += --with-http_dav_module
+endif
+ifeq ($(CONFIG_NGINX_FLV),y)
+  ADDITIONAL_MODULES += --with-http_flv_module
+endif
+ifeq ($(CONFIG_NGINX_MP4),y)
+  ADDITIONAL_MODULES += --with-http_mp4_module
+endif
+ifeq ($(CONFIG_NGINX_STUB_STATUS),y)
+  ADDITIONAL_MODULES += --with-http_stub_status_module
+endif
+ifneq ($(CONFIG_NGINX_HTTP_CHARSET),y)
+  ADDITIONAL_MODULES += --without-http_charset_module
+else
+  config_files += koi-utf koi-win win-utf
+endif
+ifneq ($(CONFIG_NGINX_HTTP_GZIP),y)
+  ADDITIONAL_MODULES += --without-http_gzip_module
+endif
+ifeq ($(CONFIG_NGINX_HTTP_GZIP_STATIC),y)
+  ADDITIONAL_MODULES += --with-http_gzip_static_module
+endif
+ifneq ($(CONFIG_NGINX_HTTP_SSI),y)
+  ADDITIONAL_MODULES += --without-http_ssi_module
+endif
+ifneq ($(CONFIG_NGINX_HTTP_USERID),y)
+  ADDITIONAL_MODULES += --without-http_userid_module
+endif
+ifneq ($(CONFIG_NGINX_HTTP_ACCESS),y)
+  ADDITIONAL_MODULES += --without-http_access_module
+endif
+ifneq ($(CONFIG_NGINX_HTTP_AUTH_BASIC),y)
+  ADDITIONAL_MODULES += --without-http_auth_basic_module
+endif
+ifeq ($(CONFIG_NGINX_HTTP_AUTH_REQUEST),y)
+  ADDITIONAL_MODULES += --with-http_auth_request_module
+endif
+ifneq ($(CONFIG_NGINX_HTTP_AUTOINDEX),y)
+  ADDITIONAL_MODULES += --without-http_autoindex_module
+endif
+ifneq ($(CONFIG_NGINX_HTTP_GEO),y)
+  ADDITIONAL_MODULES += --without-http_geo_module
+endif
+ifneq ($(CONFIG_NGINX_HTTP_MAP),y)
+  ADDITIONAL_MODULES += --without-http_map_module
+endif
+ifneq ($(CONFIG_NGINX_HTTP_SPLIT_CLIENTS),y)
+  ADDITIONAL_MODULES += --without-http_split_clients_module
+endif
+ifneq ($(CONFIG_NGINX_HTTP_REFERER),y)
+  ADDITIONAL_MODULES += --without-http_referer_module
+endif
+ifneq ($(CONFIG_NGINX_HTTP_REWRITE),y)
+  ADDITIONAL_MODULES += --without-http_rewrite_module
+endif
+ifneq ($(CONFIG_NGINX_HTTP_PROXY),y)
+  ADDITIONAL_MODULES += --without-http_proxy_module
+endif
+ifneq ($(CONFIG_NGINX_HTTP_FASTCGI),y)
+  ADDITIONAL_MODULES += --without-http_fastcgi_module
+else
+  config_files += fastcgi_params
+endif
+ifneq ($(CONFIG_NGINX_HTTP_UWSGI),y)
+  ADDITIONAL_MODULES += --without-http_uwsgi_module
+else
+  config_files += uwsgi_params
+endif
+ifneq ($(CONFIG_NGINX_HTTP_SCGI),y)
+  ADDITIONAL_MODULES += --without-http_scgi_module
+else
+  config_files += scgi_params
+endif
+ifneq ($(CONFIG_NGINX_HTTP_MEMCACHED),y)
+  ADDITIONAL_MODULES += --without-http_memcached_module
+endif
+ifneq ($(CONFIG_NGINX_HTTP_LIMIT_CONN),y)
+  ADDITIONAL_MODULES += --without-http_limit_conn_module
+endif
+ifneq ($(CONFIG_NGINX_HTTP_LIMIT_REQ),y)
+  ADDITIONAL_MODULES += --without-http_limit_req_module
+endif
+ifneq ($(CONFIG_NGINX_HTTP_EMPTY_GIF),y)
+  ADDITIONAL_MODULES += --without-http_empty_gif_module
+endif
+ifneq ($(CONFIG_NGINX_HTTP_BROWSER),y)
+  ADDITIONAL_MODULES += --without-http_browser_module
+endif
+ifneq ($(CONFIG_NGINX_HTTP_UPSTREAM_HASH),y)
+  ADDITIONAL_MODULES += --without-http_upstream_hash_module
+endif
+ifneq ($(CONFIG_NGINX_HTTP_UPSTREAM_IP_HASH),y)
+  ADDITIONAL_MODULES += --without-http_upstream_ip_hash_module
+endif
+ifneq ($(CONFIG_NGINX_HTTP_UPSTREAM_LEAST_CONN),y)
+  ADDITIONAL_MODULES += --without-http_upstream_least_conn_module
+endif
+ifneq ($(CONFIG_NGINX_HTTP_UPSTREAM_KEEPALIVE),y)
+  ADDITIONAL_MODULES += --without-http_upstream_keepalive_module
+endif
+ifneq ($(CONFIG_NGINX_HTTP_UPSTREAM_ZONE),y)
+  ADDITIONAL_MODULES += --without-http_upstream_zone_module
+endif
+ifneq ($(CONFIG_NGINX_HTTP_CACHE),y)
+  ADDITIONAL_MODULES += --without-http-cache
+endif
+ifeq ($(CONFIG_NGINX_HTTP_V2),y)
+  ADDITIONAL_MODULES += --with-http_v2_module
+endif
+ifeq ($(CONFIG_NGINX_HTTP_V3),y)
+  ADDITIONAL_MODULES += --with-http_v3_module
+endif
+ifneq ($(CONFIG_NGINX_PCRE),y)
+  ADDITIONAL_MODULES += --without-pcre
+endif
+ifeq ($(CONFIG_NGINX_HTTP_REAL_IP),y)
+  ADDITIONAL_MODULES += --with-http_realip_module
+endif
+ifeq ($(CONFIG_NGINX_HTTP_SECURE_LINK),y)
+  ADDITIONAL_MODULES += --with-http_secure_link_module
+endif
+ifeq ($(CONFIG_NGINX_HTTP_SUB),y)
+  ADDITIONAL_MODULES += --with-http_sub_module
+endif
+ifeq ($(CONFIG_NGINX_STREAM_SSL_MODULE),y)
+  ADDITIONAL_MODULES += --with-stream_ssl_module
+endif
+ifeq ($(CONFIG_NGINX_STREAM_SSL_PREREAD_MODULE),y)
+  ADDITIONAL_MODULES += --with-stream_ssl_preread_module
+endif
+ifeq ($(CONFIG_NGINX_STREAM_QUIC_MODULE),y)
+  ADDITIONAL_MODULES += --with-stream_quic_module
+endif
 ifeq ($(CONFIG_NGINX_STREAM_CORE_MODULE),y)
   ADDITIONAL_MODULES += --with-stream=dynamic
 endif
