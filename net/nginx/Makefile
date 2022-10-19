@@ -77,6 +77,7 @@ PKG_CONFIG_DEPENDS := \
 	CONFIG_NGINX_HTTP_BROTLI \
 	CONFIG_NGINX_RTMP_MODULE \
 	CONFIG_NGINX_TS_MODULE \
+	CONFIG_NGINX_HTTP_AUTH_DIGEST \
 	CONFIG_OPENSSL_ENGINE \
 	CONFIG_OPENSSL_WITH_NPN
 
@@ -102,7 +103,8 @@ define Package/nginx/Default
 	+NGINX_HEADERS_MORE:nginx-mod-headers-more \
 	+NGINX_HTTP_BROTLI:nginx-mod-brotli \
 	+NGINX_RTMP_MODULE:nginx-mod-rtmp \
-	+NGINX_TS_MODULE:nginx-mod-ts
+	+NGINX_TS_MODULE:nginx-mod-ts \
+	+NGINX_HTTP_AUTH_DIGEST:nginx-mod-auth-digest
 endef
 
 define Package/nginx/description
@@ -177,7 +179,8 @@ define Package/nginx-all-module
 	+@NGINX_HEADERS_MORE \
 	+@NGINX_HTTP_BROTLI \
 	+@NGINX_RTMP_MODULE \
-	+@NGINX_TS_MODULE
+	+@NGINX_TS_MODULE \
+	+@NGINX_HTTP_AUTH_DIGEST
   PROVIDES:=nginx nginx-ssl
 endef
 
@@ -364,6 +367,9 @@ ifeq ($(CONFIG_NGINX_RTMP_MODULE),y)
 endif
 ifeq ($(CONFIG_NGINX_TS_MODULE),y)
   ADDITIONAL_MODULES += --add-dynamic-module=$(PKG_BUILD_DIR)/nginx-ts
+endif
+ifeq ($(CONFIG_NGINX_HTTP_AUTH_DIGEST),y)
+  ADDITIONAL_MODULES += --add-dynamic-module=$(PKG_BUILD_DIR)/nginx-auth-digest
 endif
 
 define Package/nginx-mod-luci
@@ -574,6 +580,20 @@ define Prepare/nginx-ts
 	xzcat $(DL_DIR)/$(FILE) | tar -C $(PKG_BUILD_DIR) $(TAR_OPTIONS)
 endef
 
+define Download/nginx-auth-digest
+  VERSION:=b3073ef3624ec0e590671399e7b8f31458218d2a
+  SUBDIR:=nginx-auth-digest
+  FILE:=nginx-http-auth-digest-$$(VERSION).tar.xz
+  URL:=https://github.com/atomx/nginx-http-auth-digest.git
+  MIRROR_HASH:=24511f8c0867ce3e0961766f33d2a4020aeeda19325ab4400c8abf545c999b93
+  PROTO:=git
+endef
+
+define Prepare/nginx-auth-digest
+	$(eval $(Download/nginx-auth-digest))
+	xzcat $(DL_DIR)/$(FILE) | tar -C $(PKG_BUILD_DIR) $(TAR_OPTIONS)
+endef
+
 define Build/Patch
 	$(if $(QUILT),rm -rf $(PKG_BUILD_DIR)/patches; mkdir -p $(PKG_BUILD_DIR)/patches)
 	$(call PatchDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/nginx,nginx/)
@@ -646,6 +666,11 @@ ifeq ($(CONFIG_NGINX_TS_MODULE),y)
   $(Prepare/nginx-ts)
 endif
 
+ifeq ($(CONFIG_NGINX_HTTP_AUTH_DIGEST),y)
+  $(eval $(call Download,nginx-auth-digest))
+  $(Prepare/nginx-auth-digest)
+endif
+
 	$(Build/Patch)
 endef
 
@@ -680,3 +705,4 @@ $(eval $(call BuildModule,headers-more,Headers More,,ngx_http_headers_more_filte
 $(eval $(call BuildModule,brotli,Brotli,,ngx_http_brotli_filter_module.so ngx_http_brotli_static_module.so))
 $(eval $(call BuildModule,rtmp,RTMP,,ngx_rtmp_module.so))
 $(eval $(call BuildModule,ts,TS,,ngx_http_ts_module.so))
+$(eval $(call BuildModule,auth-digest,HTTP auth digest,,ngx_http_auth_digest_module.so))
