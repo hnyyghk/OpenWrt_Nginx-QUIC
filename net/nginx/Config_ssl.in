@@ -262,6 +262,7 @@ config NGINX_LUA
 
 config NGINX_DAV_EXT
 	bool
+	select NGINX_DAV
 	default n
 
 config NGINX_HEADERS_MORE

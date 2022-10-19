@@ -130,15 +130,15 @@ define Package/nginx-all-module
 	+libxml2 \
 	+zlib \
 	+libpcre +nginx-ssl-util \
-	+nginx-mod-stream \
-	+nginx-mod-ubus \
-	+nginx-mod-naxsi \
-	+nginx-mod-lua \
-	+nginx-mod-dav-ext \
-	+nginx-mod-headers-more \
-	+nginx-mod-brotli \
-	+nginx-mod-rtmp \
-	+nginx-mod-ts
+	+@NGINX_STREAM_CORE_MODULE +nginx-mod-stream \
+	+@NGINX_UBUS +nginx-mod-ubus \
+	+@NGINX_NAXSI +nginx-mod-naxsi \
+	+@NGINX_LUA +nginx-mod-lua \
+	+@NGINX_DAV_EXT +nginx-mod-dav-ext \
+	+@NGINX_HEADERS_MORE +nginx-mod-headers-more \
+	+@NGINX_HTTP_BROTLI +nginx-mod-brotli \
+	+@NGINX_RTMP_MODULE +nginx-mod-rtmp \
+	+@NGINX_TS_MODULE +nginx-mod-ts
   EXTRA_DEPENDS:=nginx-ssl-util (>=1.5-1) (<2)
   PROVIDES:=nginx nginx-ssl
 endef
@@ -623,12 +623,12 @@ define BuildModule
   $$(eval $$(call BuildPackage,nginx-mod-$(1)))
 endef
 
-$(eval $(call BuildModule,stream,stream,+@NGINX_STREAM_CORE_MODULE,ngx_stream_module.so))
-$(eval $(call BuildModule,ubus,Ubus,+libubus +libblobmsg-json +libjson-c +@NGINX_UBUS,ngx_http_ubus_module.so))
-$(eval $(call BuildModule,naxsi,NAXSI,+@NGINX_NAXSI,ngx_http_naxsi_module.so))
-$(eval $(call BuildModule,lua,LUA,+liblua +@NGINX_LUA,ngx_http_lua_module.so))
-$(eval $(call BuildModule,dav-ext,DAV-EXT,+libxml2 +@NGINX_DAV +@NGINX_DAV_EXT,ngx_http_dav_ext_module.so))
-$(eval $(call BuildModule,headers-more,Headers More,+@NGINX_HEADERS_MORE,ngx_http_headers_more_filter_module.so))
-$(eval $(call BuildModule,brotli,Brotli,+@NGINX_HTTP_BROTLI,ngx_http_brotli_filter_module.so ngx_http_brotli_static_module.so))
-$(eval $(call BuildModule,rtmp,RTMP,+@NGINX_RTMP_MODULE,ngx_rtmp_module.so))
-$(eval $(call BuildModule,ts,TS,+@NGINX_TS_MODULE,ngx_http_ts_module.so))
+$(eval $(call BuildModule,stream,stream,,ngx_stream_module.so))
+$(eval $(call BuildModule,ubus,Ubus,+libubus +libblobmsg-json +libjson-c,ngx_http_ubus_module.so))
+$(eval $(call BuildModule,naxsi,NAXSI,,ngx_http_naxsi_module.so))
+$(eval $(call BuildModule,lua,LUA,+liblua,ngx_http_lua_module.so))
+$(eval $(call BuildModule,dav-ext,DAV-EXT,+libxml2,ngx_http_dav_ext_module.so))
+$(eval $(call BuildModule,headers-more,Headers More,,ngx_http_headers_more_filter_module.so))
+$(eval $(call BuildModule,brotli,Brotli,,ngx_http_brotli_filter_module.so ngx_http_brotli_static_module.so))
+$(eval $(call BuildModule,rtmp,RTMP,,ngx_rtmp_module.so))
+$(eval $(call BuildModule,ts,TS,,ngx_http_ts_module.so))
