@@ -671,7 +671,7 @@ define BuildModule
 endef
 
 $(eval $(call BuildModule,stream,stream,,ngx_stream_module.so))
-$(eval $(call BuildModule,geoip2,geoip2,,ngx_http_geoip2_module.so ngx_stream_geoip2_module.so))
+$(eval $(call BuildModule,geoip2,geoip2,+libmaxminddb,ngx_http_geoip2_module.so ngx_stream_geoip2_module.so))
 $(eval $(call BuildModule,ubus,Ubus,+libubus +libblobmsg-json +libjson-c,ngx_http_ubus_module.so))
 $(eval $(call BuildModule,naxsi,NAXSI,,ngx_http_naxsi_module.so))
 $(eval $(call BuildModule,lua,LUA,+liblua,ngx_http_lua_module.so))
