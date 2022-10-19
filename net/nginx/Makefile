@@ -104,7 +104,16 @@ define Package/nginx-ssl
   DEPENDS += \
 	+NGINX_DAV:libxml2 \
 	+NGINX_HTTP_GZIP:zlib \
-	+NGINX_PCRE:libpcre +NGINX_PCRE:nginx-ssl-util +!NGINX_PCRE:nginx-ssl-util-nopcre
+	+NGINX_PCRE:libpcre +NGINX_PCRE:nginx-ssl-util +!NGINX_PCRE:nginx-ssl-util-nopcre \
+	+NGINX_STREAM_CORE_MODULE:nginx-mod-stream \
+	+NGINX_UBUS:nginx-mod-ubus \
+	+NGINX_NAXSI:nginx-mod-naxsi \
+	+NGINX_LUA:nginx-mod-lua \
+	+NGINX_DAV_EXT:nginx-mod-dav-ext \
+	+NGINX_HEADERS_MORE:nginx-mod-headers-more \
+	+NGINX_HTTP_BROTLI:nginx-mod-brotli \
+	+NGINX_RTMP_MODULE:nginx-mod-rtmp \
+	+NGINX_TS_MODULE:nginx-mod-ts
   EXTRA_DEPENDS:=nginx-ssl-util$(if $(CONFIG_NGINX_PCRE),,-nopcre) (>=1.5-1) (<2)
   CONFLICTS:=nginx-all-module
 endef
