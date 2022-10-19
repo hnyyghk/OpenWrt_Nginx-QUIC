@@ -68,6 +68,7 @@ PKG_CONFIG_DEPENDS := \
 	CONFIG_NGINX_STREAM_SSL_PREREAD_MODULE \
 	CONFIG_NGINX_STREAM_QUIC_MODULE \
 	CONFIG_NGINX_STREAM_CORE_MODULE \
+	CONFIG_NGINX_GEOIP2_MODULE \
 	CONFIG_NGINX_UBUS \
 	CONFIG_NGINX_NAXSI \
 	CONFIG_NGINX_LUA \
@@ -93,6 +94,7 @@ define Package/nginx/Default
 	+NGINX_HTTP_GZIP:zlib \
 	+NGINX_PCRE:libpcre +NGINX_PCRE:nginx-ssl-util +!NGINX_PCRE:nginx-ssl-util-nopcre \
 	+NGINX_STREAM_CORE_MODULE:nginx-mod-stream \
+	+NGINX_GEOIP2_MODULE:nginx-mod-geoip2 \
 	+NGINX_UBUS:nginx-mod-ubus \
 	+NGINX_NAXSI:nginx-mod-naxsi \
 	+NGINX_LUA:nginx-mod-lua \
@@ -167,6 +169,7 @@ define Package/nginx-all-module
 	+@NGINX_STREAM_SSL_PREREAD_MODULE \
 	+@NGINX_STREAM_QUIC_MODULE \
 	+@NGINX_STREAM_CORE_MODULE \
+	+@NGINX_GEOIP2_MODULE \
 	+@NGINX_UBUS \
 	+@NGINX_NAXSI \
 	+@NGINX_LUA \
@@ -335,8 +338,8 @@ endif
 ifeq ($(CONFIG_NGINX_STREAM_CORE_MODULE),y)
   ADDITIONAL_MODULES += --with-stream=dynamic
 endif
-ifeq ($(CONFIG_NGINX_GEOIP_MODULE),y)
-  ADDITIONAL_MODULES += --with-http_geoip_module=dynamic
+ifeq ($(CONFIG_NGINX_GEOIP2_MODULE),y)
+  ADDITIONAL_MODULES += --add-dynamic-module=$(PKG_BUILD_DIR)/nginx-geoip2-module
 endif
 ifeq ($(CONFIG_NGINX_UBUS),y)
   ADDITIONAL_MODULES += --add-dynamic-module=$(PKG_BUILD_DIR)/nginx-ubus-module
@@ -444,6 +447,20 @@ exit 0
 endef
 
 Package/nginx-all-module/prerm = $(Package/nginx-ssl/prerm)
+
+define Download/nginx-geoip2-module
+  VERSION:=cbaa35461c62a99d2577e6bae3273492502d8769
+  SUBDIR:=nginx-geoip2-module
+  FILE:=nginx-geoip2-module-$$(VERSION).tar.xz
+  URL:=https://github.com/leev/ngx_http_geoip2_module.git
+  MIRROR_HASH:=skip
+  PROTO:=git
+endef
+
+define Prepare/nginx-geoip2-module
+	$(eval $(Download/nginx-geoip2-module))
+	xzcat $(DL_DIR)/$(FILE) | tar -C $(PKG_BUILD_DIR) $(TAR_OPTIONS)
+endef
 
 define Download/nginx-ubus-module
   VERSION:=b2d7260dcb428b2fb65540edb28d7538602b4a26
@@ -584,6 +601,11 @@ define Build/Prepare
 	mkdir -p $(PKG_BUILD_DIR)
 	$(PKG_UNPACK)
 
+ifeq ($(CONFIG_NGINX_GEOIP2_MODULE),y)
+  $(eval $(call Download,nginx-geoip2-module))
+  $(Prepare/nginx-geoip2-module)
+endif
+
 ifeq ($(CONFIG_NGINX_UBUS),y)
   $(eval $(call Download,nginx-ubus-module))
   $(Prepare/nginx-ubus-module)
@@ -649,6 +671,7 @@ define BuildModule
 endef
 
 $(eval $(call BuildModule,stream,stream,,ngx_stream_module.so))
+$(eval $(call BuildModule,geoip2,geoip2,,ngx_http_geoip2_module.so ngx_stream_geoip2_module.so))
 $(eval $(call BuildModule,ubus,Ubus,+libubus +libblobmsg-json +libjson-c,ngx_http_ubus_module.so))
 $(eval $(call BuildModule,naxsi,NAXSI,,ngx_http_naxsi_module.so))
 $(eval $(call BuildModule,lua,LUA,+liblua,ngx_http_lua_module.so))

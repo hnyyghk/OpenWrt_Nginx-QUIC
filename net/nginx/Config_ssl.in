@@ -243,6 +243,13 @@ config NGINX_STREAM_CORE_MODULE
 		Add support for NGINX request streaming.
 	default n
 
+config NGINX_GEOIP2_MODULE
+	bool
+	prompt "Enable GEOIP2 module"
+	help
+		Add support for GeoIP2 module.
+	default n
+
 config NGINX_UBUS
 	bool
 	prompt "Enable UBUS module"
