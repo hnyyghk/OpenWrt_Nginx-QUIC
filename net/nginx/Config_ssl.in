@@ -15,17 +15,6 @@ config NGINX_DAV
 		Enable the HTTP and WebDAV methods PUT, DELETE, MKCOL, COPY and MOVE.
 	default n
 
-config NGINX_DAV_EXT
-	bool
-	default n
-
-config NGINX_UBUS
-	bool
-	prompt "Enable UBUS module"
-	help
-		Enable UBUS api support directly from the server.
-	default n
-
 config NGINX_FLV
 	bool
 	prompt "Enable FLV module"
@@ -208,16 +197,6 @@ config NGINX_PCRE
 	prompt "Enable PCRE library usage"
 	default y
 
-config NGINX_NAXSI
-	bool
-	prompt "Enable NAXSI module"
-	default n
-
-config NGINX_LUA
-	bool
-	prompt "Enable Lua module"
-	default n
-
 config NGINX_HTTP_REAL_IP
 	bool
 	prompt "Enable HTTP real ip module"
@@ -231,27 +210,6 @@ config NGINX_HTTP_SECURE_LINK
 config NGINX_HTTP_SUB
 	bool
 	prompt "Enable HTTP sub module"
-	default n
-
-config NGINX_HEADERS_MORE
-	bool
-	prompt "Enable Headers_more module"
-	help
-		Set and clear input and output headers...more than "add"!
-	default n
-
-config NGINX_HTTP_BROTLI
-	bool
-	prompt "Enable Brotli compression module"
-	help
-		Add support for brotli compression module.
-	default n
-
-config NGINX_STREAM_CORE_MODULE
-	bool
-	prompt "Enable stream support"
-	help
-		Add support for NGINX request streaming.
 	default n
 
 config NGINX_STREAM_SSL_MODULE
@@ -276,6 +234,48 @@ config NGINX_STREAM_QUIC_MODULE
 	select NGINX_STREAM_CORE_MODULE
 	help
 		Add support for NGINX request streaming with QUIC termination.
+	default n
+
+config NGINX_STREAM_CORE_MODULE
+	bool
+	prompt "Enable stream support"
+	help
+		Add support for NGINX request streaming.
+	default n
+
+config NGINX_UBUS
+	bool
+	prompt "Enable UBUS module"
+	help
+		Enable UBUS api support directly from the server.
+	default n
+
+config NGINX_NAXSI
+	bool
+	prompt "Enable NAXSI module"
+	default n
+
+config NGINX_LUA
+	bool
+	prompt "Enable Lua module"
+	default n
+
+config NGINX_DAV_EXT
+	bool
+	default n
+
+config NGINX_HEADERS_MORE
+	bool
+	prompt "Enable Headers_more module"
+	help
+		Set and clear input and output headers...more than "add"!
+	default n
+
+config NGINX_HTTP_BROTLI
+	bool
+	prompt "Enable Brotli compression module"
+	help
+		Add support for brotli compression module.
 	default n
 
 config NGINX_RTMP_MODULE

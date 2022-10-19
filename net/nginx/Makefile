@@ -26,10 +26,8 @@ PKG_INSTALL:=1
 
 PKG_CONFIG_DEPENDS := \
 	CONFIG_NGINX_DAV \
-	CONFIG_NGINX_DAV_EXT \
 	CONFIG_NGINX_FLV \
 	CONFIG_NGINX_MP4 \
-	CONFIG_NGINX_UBUS \
 	CONFIG_NGINX_STUB_STATUS \
 	CONFIG_NGINX_HTTP_CHARSET \
 	CONFIG_NGINX_HTTP_GZIP \
@@ -63,17 +61,19 @@ PKG_CONFIG_DEPENDS := \
 	CONFIG_NGINX_HTTP_V2 \
 	CONFIG_NGINX_HTTP_V3 \
 	CONFIG_NGINX_PCRE \
-	CONFIG_NGINX_NAXSI \
-	CONFIG_NGINX_LUA \
 	CONFIG_NGINX_HTTP_REAL_IP \
 	CONFIG_NGINX_HTTP_SECURE_LINK \
 	CONFIG_NGINX_HTTP_SUB \
-	CONFIG_NGINX_HTTP_BROTLI \
-	CONFIG_NGINX_HEADERS_MORE \
-	CONFIG_NGINX_STREAM_CORE_MODULE \
 	CONFIG_NGINX_STREAM_SSL_MODULE \
 	CONFIG_NGINX_STREAM_SSL_PREREAD_MODULE \
 	CONFIG_NGINX_STREAM_QUIC_MODULE \
+	CONFIG_NGINX_STREAM_CORE_MODULE \
+	CONFIG_NGINX_UBUS \
+	CONFIG_NGINX_NAXSI \
+	CONFIG_NGINX_LUA \
+	CONFIG_NGINX_DAV_EXT \
+	CONFIG_NGINX_HEADERS_MORE \
+	CONFIG_NGINX_HTTP_BROTLI \
 	CONFIG_NGINX_RTMP_MODULE \
 	CONFIG_NGINX_TS_MODULE \
 	CONFIG_OPENSSL_ENGINE \
@@ -101,9 +101,10 @@ define Package/nginx-ssl
   $(Package/nginx/Default)
   TITLE += with SSL support
   VARIANT:=ssl
-  DEPENDS+= +NGINX_PCRE:libpcre \
-	+NGINX_PCRE:nginx-ssl-util +!NGINX_PCRE:nginx-ssl-util-nopcre \
-	+NGINX_HTTP_GZIP:zlib +NGINX_DAV:libxml2
+  DEPENDS += \
+	+NGINX_DAV:libxml2 \
+	+NGINX_HTTP_GZIP:zlib \
+	+NGINX_PCRE:libpcre +NGINX_PCRE:nginx-ssl-util +!NGINX_PCRE:nginx-ssl-util-nopcre
   EXTRA_DEPENDS:=nginx-ssl-util$(if $(CONFIG_NGINX_PCRE),,-nopcre) (>=1.5-1) (<2)
   CONFLICTS:=nginx-all-module
 endef
@@ -115,12 +116,21 @@ Package/nginx-ssl/description = $(Package/nginx/description) \
 define Package/nginx-all-module
   $(Package/nginx/Default)
   TITLE += with ALL module selected
-  DEPENDS+=+libpcre +nginx-ssl-util +zlib +libxml2 \
-	+nginx-mod-ubus +nginx-mod-naxsi +nginx-mod-lua \
-	+nginx-mod-dav-ext +nginx-mod-stream +nginx-mod-headers-more +nginx-mod-brotli \
-	+nginx-mod-rtmp +nginx-mod-ts
-  EXTRA_DEPENDS:=nginx-ssl-util (>=1.5-1) (<2)
   VARIANT:=all-module
+  DEPENDS += \
+	+libxml2 \
+	+zlib \
+	+libpcre +nginx-ssl-util \
+	+nginx-mod-stream \
+	+nginx-mod-ubus \
+	+nginx-mod-naxsi \
+	+nginx-mod-lua \
+	+nginx-mod-dav-ext \
+	+nginx-mod-headers-more \
+	+nginx-mod-brotli \
+	+nginx-mod-rtmp \
+	+nginx-mod-ts
+  EXTRA_DEPENDS:=nginx-ssl-util (>=1.5-1) (<2)
   PROVIDES += nginx-ssl
 endef
 
@@ -142,11 +152,20 @@ ADDITIONAL_MODULES:= --with-compat --with-http_ssl_module
 config_files=mime.types
 
 ifneq ($(BUILD_VARIANT),all-module)
-  ifneq ($(CONFIG_NGINX_HTTP_CACHE),y)
-    ADDITIONAL_MODULES += --without-http-cache
+  ifeq ($(CONFIG_IPV6),y)
+    ADDITIONAL_MODULES += --with-ipv6
   endif
-  ifneq ($(CONFIG_NGINX_PCRE),y)
-    ADDITIONAL_MODULES += --without-pcre
+  ifeq ($(CONFIG_NGINX_DAV),y)
+    ADDITIONAL_MODULES += --with-http_dav_module
+  endif
+  ifeq ($(CONFIG_NGINX_FLV),y)
+    ADDITIONAL_MODULES += --with-http_flv_module
+  endif
+  ifeq ($(CONFIG_NGINX_MP4),y)
+    ADDITIONAL_MODULES += --with-http_mp4_module
+  endif
+  ifeq ($(CONFIG_NGINX_STUB_STATUS),y)
+    ADDITIONAL_MODULES += --with-http_stub_status_module
   endif
   ifneq ($(CONFIG_NGINX_HTTP_CHARSET),y)
     ADDITIONAL_MODULES += --without-http_charset_module
@@ -170,6 +189,9 @@ ifneq ($(BUILD_VARIANT),all-module)
   endif
   ifneq ($(CONFIG_NGINX_HTTP_AUTH_BASIC),y)
     ADDITIONAL_MODULES += --without-http_auth_basic_module
+  endif
+  ifeq ($(CONFIG_NGINX_HTTP_AUTH_REQUEST),y)
+    ADDITIONAL_MODULES += --with-http_auth_request_module
   endif
   ifneq ($(CONFIG_NGINX_HTTP_AUTOINDEX),y)
     ADDITIONAL_MODULES += --without-http_autoindex_module
@@ -237,29 +259,17 @@ ifneq ($(BUILD_VARIANT),all-module)
   ifneq ($(CONFIG_NGINX_HTTP_UPSTREAM_ZONE),y)
     ADDITIONAL_MODULES += --without-http_upstream_zone_module
   endif
-  ifeq ($(CONFIG_IPV6),y)
-    ADDITIONAL_MODULES += --with-ipv6
-  endif
-  ifeq ($(CONFIG_NGINX_STUB_STATUS),y)
-    ADDITIONAL_MODULES += --with-http_stub_status_module
-  endif
-  ifeq ($(CONFIG_NGINX_FLV),y)
-    ADDITIONAL_MODULES += --with-http_flv_module
-  endif
-  ifeq ($(CONFIG_NGINX_MP4),y)
-    ADDITIONAL_MODULES += --with-http_mp4_module
-  endif
-  ifeq ($(CONFIG_NGINX_DAV),y)
-    ADDITIONAL_MODULES += --with-http_dav_module
-  endif
-  ifeq ($(CONFIG_NGINX_HTTP_AUTH_REQUEST),y)
-    ADDITIONAL_MODULES += --with-http_auth_request_module
+  ifneq ($(CONFIG_NGINX_HTTP_CACHE),y)
+    ADDITIONAL_MODULES += --without-http-cache
   endif
   ifeq ($(CONFIG_NGINX_HTTP_V2),y)
     ADDITIONAL_MODULES += --with-http_v2_module
   endif
   ifeq ($(CONFIG_NGINX_HTTP_V3),y)
     ADDITIONAL_MODULES += --with-http_v3_module
+  endif
+  ifneq ($(CONFIG_NGINX_PCRE),y)
+    ADDITIONAL_MODULES += --without-pcre
   endif
   ifeq ($(CONFIG_NGINX_HTTP_REAL_IP),y)
     ADDITIONAL_MODULES += --with-http_realip_module
@@ -280,14 +290,23 @@ ifneq ($(BUILD_VARIANT),all-module)
     ADDITIONAL_MODULES += --with-stream_quic_module
   endif
 else
-  ADDITIONAL_MODULES += --with-ipv6 --with-http_stub_status_module --with-http_flv_module --with-http_mp4_module \
-	--with-http_dav_module \
+  ADDITIONAL_MODULES += --with-ipv6 --with-http_dav_module \
+	--with-http_flv_module --with-http_mp4_module --with-http_stub_status_module \
 	--with-http_gzip_static_module --with-http_auth_request_module --with-http_v2_module --with-http_v3_module --with-http_realip_module \
 	--with-http_secure_link_module --with-http_sub_module \
 	--with-stream_ssl_module --with-stream_ssl_preread_module --with-stream_quic_module
   config_files += koi-utf koi-win win-utf fastcgi_params uwsgi_params scgi_params
 endif
 
+ifeq ($(CONFIG_NGINX_STREAM_CORE_MODULE),y)
+  ADDITIONAL_MODULES += --with-stream=dynamic
+endif
+ifeq ($(CONFIG_NGINX_GEOIP_MODULE),y)
+  ADDITIONAL_MODULES += --with-http_geoip_module=dynamic
+endif
+ifeq ($(CONFIG_NGINX_UBUS),y)
+  ADDITIONAL_MODULES += --add-dynamic-module=$(PKG_BUILD_DIR)/nginx-ubus-module
+endif
 ifeq ($(CONFIG_NGINX_NAXSI),y)
   ADDITIONAL_MODULES += --add-dynamic-module=$(PKG_BUILD_DIR)/nginx-naxsi/naxsi_src
 endif
@@ -296,12 +315,6 @@ ifeq ($(CONFIG_NGINX_LUA),y)
 endif
 ifeq ($(CONFIG_NGINX_DAV_EXT),y)
   ADDITIONAL_MODULES += --add-dynamic-module=$(PKG_BUILD_DIR)/nginx-dav-ext-module
-endif
-ifeq ($(CONFIG_NGINX_STREAM_CORE_MODULE),y)
-  ADDITIONAL_MODULES += --with-stream=dynamic
-endif
-ifeq ($(CONFIG_NGINX_UBUS),y)
-  ADDITIONAL_MODULES += --add-dynamic-module=$(PKG_BUILD_DIR)/nginx-ubus-module
 endif
 ifeq ($(CONFIG_NGINX_HEADERS_MORE),y)
   ADDITIONAL_MODULES += --add-dynamic-module=$(PKG_BUILD_DIR)/nginx-headers-more
@@ -314,9 +327,6 @@ ifeq ($(CONFIG_NGINX_RTMP_MODULE),y)
 endif
 ifeq ($(CONFIG_NGINX_TS_MODULE),y)
   ADDITIONAL_MODULES += --add-dynamic-module=$(PKG_BUILD_DIR)/nginx-ts
-endif
-ifeq ($(CONFIG_NGINX_GEOIP_MODULE),y)
-  ADDITIONAL_MODULES += --with-http_geoip_module=dynamic
 endif
 
 define Package/nginx-mod-luci
@@ -401,6 +411,62 @@ endef
 
 Package/nginx-all-module/prerm = $(Package/nginx-ssl/prerm)
 
+define Download/nginx-ubus-module
+  VERSION:=b2d7260dcb428b2fb65540edb28d7538602b4a26
+  SUBDIR:=nginx-ubus-module
+  FILE:=nginx-ubus-module-$$(VERSION).tar.xz
+  URL:=https://github.com/Ansuel/nginx-ubus-module.git
+  MIRROR_HASH:=472cef416d25effcac66c85417ab6596e634a7a64d45b709bb090892d567553c
+  PROTO:=git
+endef
+
+define Prepare/nginx-ubus-module
+	$(eval $(Download/nginx-ubus-module))
+	xzcat $(DL_DIR)/$(FILE) | tar -C $(PKG_BUILD_DIR) $(TAR_OPTIONS)
+endef
+
+define Download/nginx-naxsi
+  VERSION:=951123ad456bdf5ac94e8d8819342fe3d49bc002
+  SUBDIR:=nginx-naxsi
+  FILE:=nginx-naxsi-module-$$(VERSION).tar.xz
+  URL:=https://github.com/nbs-system/naxsi.git
+  MIRROR_HASH:=c734cae19a596affadd62a2df1b58d3df8d1364093a4e80a7cd1ab4555963535
+  PROTO:=git
+endef
+
+define Prepare/nginx-naxsi
+	$(eval $(Download/nginx-naxsi))
+	xzcat $(DL_DIR)/$(FILE) | tar -C $(PKG_BUILD_DIR) $(TAR_OPTIONS)
+endef
+
+define Download/lua-nginx
+  VERSION:=e94f2e5d64daa45ff396e262d8dab8e56f5f10e0
+  SUBDIR:=lua-nginx
+  FILE:=lua-nginx-module-$$(VERSION).tar.xz
+  URL:=https://github.com/openresty/lua-nginx-module.git
+  MIRROR_HASH:=27729921964f066d97e99c263da153b34622a2f4b811114e4c3ee61c6fc71395
+  PROTO:=git
+endef
+
+define Prepare/lua-nginx
+	$(eval $(Download/lua-nginx))
+	xzcat $(DL_DIR)/$(FILE) | tar -C $(PKG_BUILD_DIR) $(TAR_OPTIONS)
+endef
+
+define Download/nginx-dav-ext-module
+  VERSION:=f5e30888a256136d9c550bf1ada77d6ea78a48af
+  SUBDIR:=nginx-dav-ext-module
+  FILE:=nginx-dav-ext-module-$$(VERSION).tar.xz
+  URL:=https://github.com/arut/nginx-dav-ext-module.git
+  MIRROR_HASH:=70bb4c3907f4b783605500ba494e907aede11f8505702e370012abb3c177dc5b
+  PROTO:=git
+endef
+
+define Prepare/nginx-dav-ext-module
+	$(eval $(Download/nginx-dav-ext-module))
+	xzcat $(DL_DIR)/$(FILE) | tar -C $(PKG_BUILD_DIR) $(TAR_OPTIONS)
+endef
+
 define Download/nginx-headers-more
   VERSION:=bea1be3bbf6af28f6aa8cf0c01c07ee1637e2bd0
   SUBDIR:=nginx-headers-more
@@ -457,62 +523,6 @@ define Prepare/nginx-ts
 	xzcat $(DL_DIR)/$(FILE) | tar -C $(PKG_BUILD_DIR) $(TAR_OPTIONS)
 endef
 
-define Download/nginx-naxsi
-  VERSION:=951123ad456bdf5ac94e8d8819342fe3d49bc002
-  SUBDIR:=nginx-naxsi
-  FILE:=nginx-naxsi-module-$$(VERSION).tar.xz
-  URL:=https://github.com/nbs-system/naxsi.git
-  MIRROR_HASH:=c734cae19a596affadd62a2df1b58d3df8d1364093a4e80a7cd1ab4555963535
-  PROTO:=git
-endef
-
-define Prepare/nginx-naxsi
-	$(eval $(Download/nginx-naxsi))
-	xzcat $(DL_DIR)/$(FILE) | tar -C $(PKG_BUILD_DIR) $(TAR_OPTIONS)
-endef
-
-define Download/lua-nginx
-  VERSION:=e94f2e5d64daa45ff396e262d8dab8e56f5f10e0
-  SUBDIR:=lua-nginx
-  FILE:=lua-nginx-module-$$(VERSION).tar.xz
-  URL:=https://github.com/openresty/lua-nginx-module.git
-  MIRROR_HASH:=27729921964f066d97e99c263da153b34622a2f4b811114e4c3ee61c6fc71395
-  PROTO:=git
-endef
-
-define Prepare/lua-nginx
-	$(eval $(Download/lua-nginx))
-	xzcat $(DL_DIR)/$(FILE) | tar -C $(PKG_BUILD_DIR) $(TAR_OPTIONS)
-endef
-
-define Download/nginx-dav-ext-module
-  VERSION:=f5e30888a256136d9c550bf1ada77d6ea78a48af
-  SUBDIR:=nginx-dav-ext-module
-  FILE:=nginx-dav-ext-module-$$(VERSION).tar.xz
-  URL:=https://github.com/arut/nginx-dav-ext-module.git
-  MIRROR_HASH:=70bb4c3907f4b783605500ba494e907aede11f8505702e370012abb3c177dc5b
-  PROTO:=git
-endef
-
-define Prepare/nginx-dav-ext-module
-	$(eval $(Download/nginx-dav-ext-module))
-	xzcat $(DL_DIR)/$(FILE) | tar -C $(PKG_BUILD_DIR) $(TAR_OPTIONS)
-endef
-
-define Download/nginx-ubus-module
-  VERSION:=b2d7260dcb428b2fb65540edb28d7538602b4a26
-  SUBDIR:=nginx-ubus-module
-  FILE:=nginx-ubus-module-$$(VERSION).tar.xz
-  URL:=https://github.com/Ansuel/nginx-ubus-module.git
-  MIRROR_HASH:=472cef416d25effcac66c85417ab6596e634a7a64d45b709bb090892d567553c
-  PROTO:=git
-endef
-
-define Prepare/nginx-ubus-module
-	$(eval $(Download/nginx-ubus-module))
-	xzcat $(DL_DIR)/$(FILE) | tar -C $(PKG_BUILD_DIR) $(TAR_OPTIONS)
-endef
-
 define Build/Patch
 	$(if $(QUILT),rm -rf $(PKG_BUILD_DIR)/patches; mkdir -p $(PKG_BUILD_DIR)/patches)
 	$(call PatchDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/nginx,nginx/)
@@ -540,6 +550,11 @@ define Build/Prepare
 	mkdir -p $(PKG_BUILD_DIR)
 	$(PKG_UNPACK)
 
+ifeq ($(CONFIG_NGINX_UBUS),y)
+  $(eval $(call Download,nginx-ubus-module))
+  $(Prepare/nginx-ubus-module)
+endif
+
 ifeq ($(CONFIG_NGINX_NAXSI),y)
   $(eval $(call Download,nginx-naxsi))
   $(Prepare/nginx-naxsi)
@@ -550,14 +565,19 @@ ifneq "$(or $(CONFIG_NGINX_LUA),$(QUILT))" ""
   $(Prepare/lua-nginx)
 endif
 
-ifeq ($(CONFIG_NGINX_HTTP_BROTLI),y)
-  $(eval $(call Download,nginx-brotli))
-  $(Prepare/nginx-brotli)
+ifneq "$(or $(CONFIG_NGINX_DAV_EXT),$(QUILT))" ""
+  $(eval $(call Download,nginx-dav-ext-module))
+  $(Prepare/nginx-dav-ext-module)
 endif
 
 ifeq ($(CONFIG_NGINX_HEADERS_MORE),y)
   $(eval $(call Download,nginx-headers-more))
   $(Prepare/nginx-headers-more)
+endif
+
+ifeq ($(CONFIG_NGINX_HTTP_BROTLI),y)
+  $(eval $(call Download,nginx-brotli))
+  $(Prepare/nginx-brotli)
 endif
 
 ifneq "$(or $(CONFIG_NGINX_RTMP_MODULE),$(QUILT))" ""
@@ -568,16 +588,6 @@ endif
 ifeq ($(CONFIG_NGINX_TS_MODULE),y)
   $(eval $(call Download,nginx-ts))
   $(Prepare/nginx-ts)
-endif
-
-ifneq "$(or $(CONFIG_NGINX_DAV_EXT),$(QUILT))" ""
-  $(eval $(call Download,nginx-dav-ext-module))
-  $(Prepare/nginx-dav-ext-module)
-endif
-
-ifeq ($(CONFIG_NGINX_UBUS),y)
-  $(eval $(call Download,nginx-ubus-module))
-  $(Prepare/nginx-ubus-module)
 endif
 
 	$(Build/Patch)
