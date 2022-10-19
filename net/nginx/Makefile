@@ -38,7 +38,8 @@ PKG_MOD_EXTRA := \
 	headers-more \
 	ts \
 	ubus \
-	njs
+	njs \
+	auth-digest
 # official and 3rd-party modules
 PKG_MOD_ALL := \
 	$(PKG_MOD_EXTRA) \
@@ -335,6 +336,14 @@ define Download/nginx-mod-njs
   PROTO:=git
 endef
 
+define Download/nginx-mod-auth-digest
+  SOURCE_DATE:=2019-07-27
+  VERSION:=b3073ef3624ec0e590671399e7b8f31458218d2a
+  URL:=https://github.com/atomx/nginx-http-auth-digest.git
+  MIRROR_HASH:=24511f8c0867ce3e0961766f33d2a4020aeeda19325ab4400c8abf545c999b93
+  PROTO:=git
+endef
+
 define Module/Download
   define Download/nginx-mod-$(1) +=
 
@@ -513,3 +522,5 @@ $(eval $(call BuildModule,geoip2,+nginx-mod-stream +libmaxminddb,ngx_http_geoip2
 	Enable MaxMind GeoIP2 module.))
 $(eval $(call BuildModule,njs,+zlib +libxml2 +libxslt +libpcre2,ngx_http_js, \
 	Enable NJS module.))
+$(eval $(call BuildModule,auth-digest,,ngx_http_auth_digest, \
+	Enable HTTP auth digest.))
