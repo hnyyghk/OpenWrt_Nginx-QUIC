@@ -89,7 +89,6 @@ define Package/nginx/Default
   TITLE:=Nginx web server
   URL:=http://nginx.org/
   DEPENDS:=+libopenssl +libpthread
-  PROVIDES:=nginx
 endef
 
 define Package/nginx/description
@@ -116,6 +115,7 @@ define Package/nginx-ssl
 	+NGINX_TS_MODULE:nginx-mod-ts
   EXTRA_DEPENDS:=nginx-ssl-util$(if $(CONFIG_NGINX_PCRE),,-nopcre) (>=1.5-1) (<2)
   CONFLICTS:=nginx-all-module
+  PROVIDES:=nginx
 endef
 
 Package/nginx-ssl/description = $(Package/nginx/description) \
@@ -140,7 +140,7 @@ define Package/nginx-all-module
 	+nginx-mod-rtmp \
 	+nginx-mod-ts
   EXTRA_DEPENDS:=nginx-ssl-util (>=1.5-1) (<2)
-  PROVIDES += nginx-ssl
+  PROVIDES:=nginx nginx-ssl
 endef
 
 Package/nginx-all-module/description = $(Package/nginx/description) \
