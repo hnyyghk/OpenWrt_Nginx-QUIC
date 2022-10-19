@@ -607,7 +607,7 @@ $(eval $(call BuildModule,stream,stream,+@NGINX_STREAM_CORE_MODULE,ngx_stream_mo
 $(eval $(call BuildModule,ubus,Ubus,+libubus +libblobmsg-json +libjson-c +@NGINX_UBUS,ngx_http_ubus_module.so))
 $(eval $(call BuildModule,naxsi,NAXSI,+@NGINX_NAXSI,ngx_http_naxsi_module.so))
 $(eval $(call BuildModule,lua,LUA,+liblua +@NGINX_LUA,ngx_http_lua_module.so))
-$(eval $(call BuildModule,dav-ext,DAV-EXT,+@NGINX_DAV +@NGINX_DAV_EXT,ngx_http_dav_ext_module.so))
+$(eval $(call BuildModule,dav-ext,DAV-EXT,+libxml2 +@NGINX_DAV +@NGINX_DAV_EXT,ngx_http_dav_ext_module.so))
 $(eval $(call BuildModule,headers-more,Headers More,+@NGINX_HEADERS_MORE,ngx_http_headers_more_filter_module.so))
 $(eval $(call BuildModule,brotli,Brotli,+@NGINX_HTTP_BROTLI,ngx_http_brotli_filter_module.so ngx_http_brotli_static_module.so))
 $(eval $(call BuildModule,rtmp,RTMP,+@NGINX_RTMP_MODULE,ngx_rtmp_module.so))
