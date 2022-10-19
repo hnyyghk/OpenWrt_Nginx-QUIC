@@ -88,19 +88,7 @@ define Package/nginx/Default
   SUBMENU:=Web Servers/Proxies
   TITLE:=Nginx web server
   URL:=http://nginx.org/
-  DEPENDS:=+libopenssl +libpthread
-endef
-
-define Package/nginx/description
- nginx is an HTTP and reverse proxy server, as well as a mail proxy server, \
- written by Igor Sysoev.
-endef
-
-define Package/nginx-ssl
-  $(Package/nginx/Default)
-  TITLE += with SSL support
-  VARIANT:=ssl
-  DEPENDS += \
+  DEPENDS:=+libopenssl +libpthread \
 	+NGINX_DAV:libxml2 \
 	+NGINX_HTTP_GZIP:zlib \
 	+NGINX_PCRE:libpcre +NGINX_PCRE:nginx-ssl-util +!NGINX_PCRE:nginx-ssl-util-nopcre \
@@ -113,7 +101,17 @@ define Package/nginx-ssl
 	+NGINX_HTTP_BROTLI:nginx-mod-brotli \
 	+NGINX_RTMP_MODULE:nginx-mod-rtmp \
 	+NGINX_TS_MODULE:nginx-mod-ts
-  EXTRA_DEPENDS:=nginx-ssl-util$(if $(CONFIG_NGINX_PCRE),,-nopcre) (>=1.5-1) (<2)
+endef
+
+define Package/nginx/description
+ nginx is an HTTP and reverse proxy server, as well as a mail proxy server, \
+ written by Igor Sysoev.
+endef
+
+define Package/nginx-ssl
+  $(Package/nginx/Default)
+  TITLE += with SSL support
+  VARIANT:=ssl
   CONFLICTS:=nginx-all-module
   PROVIDES:=nginx
 endef
@@ -126,20 +124,18 @@ define Package/nginx-all-module
   $(Package/nginx/Default)
   TITLE += with ALL module selected
   VARIANT:=all-module
-  DEPENDS += \
-	+libxml2 \
-	+zlib \
-	+libpcre +nginx-ssl-util \
-	+@NGINX_STREAM_CORE_MODULE +nginx-mod-stream \
-	+@NGINX_UBUS +nginx-mod-ubus \
-	+@NGINX_NAXSI +nginx-mod-naxsi \
-	+@NGINX_LUA +nginx-mod-lua \
-	+@NGINX_DAV_EXT +nginx-mod-dav-ext \
-	+@NGINX_HEADERS_MORE +nginx-mod-headers-more \
-	+@NGINX_HTTP_BROTLI +nginx-mod-brotli \
-	+@NGINX_RTMP_MODULE +nginx-mod-rtmp \
-	+@NGINX_TS_MODULE +nginx-mod-ts
-  EXTRA_DEPENDS:=nginx-ssl-util (>=1.5-1) (<2)
+  DEPENDS += +@NGINX_DAV \
+	+@NGINX_HTTP_GZIP \
+	+@NGINX_PCRE \
+	+@NGINX_STREAM_CORE_MODULE \
+	+@NGINX_UBUS \
+	+@NGINX_NAXSI \
+	+@NGINX_LUA \
+	+@NGINX_DAV_EXT \
+	+@NGINX_HEADERS_MORE \
+	+@NGINX_HTTP_BROTLI \
+	+@NGINX_RTMP_MODULE \
+	+@NGINX_TS_MODULE
   PROVIDES:=nginx nginx-ssl
 endef
 
