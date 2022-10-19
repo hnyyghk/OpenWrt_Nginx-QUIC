@@ -317,7 +317,7 @@ ifneq ($(BUILD_VARIANT),all-module)
 else
   ADDITIONAL_MODULES += --with-ipv6 --with-http_stub_status_module --with-http_flv_module \
 	--with-http_dav_module \
-	--with-http_auth_request_module --with-http_v2_module --with-http_realip_module \
+	--with-http_gzip_static_module --with-http_auth_request_module --with-http_v2_module --with-http_realip_module \
 	--with-http_secure_link_module --with-http_sub_module \
 	--with-stream_ssl_module --with-stream_ssl_preread_module
   config_files += koi-utf koi-win win-utf fastcgi_params uwsgi_params scgi_params
