@@ -6,7 +6,7 @@
 #
 
 menu "Configuration"
-        depends on PACKAGE_nginx-ssl
+        depends on PACKAGE_nginx-ssl || PACKAGE_nginx-all-module
 
 config NGINX_DAV
 	bool
