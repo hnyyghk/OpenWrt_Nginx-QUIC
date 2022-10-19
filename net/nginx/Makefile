@@ -114,9 +114,9 @@ Package/nginx-ssl/description = $(Package/nginx/description) \
 define Package/nginx-all-module
   $(Package/nginx/Default)
   TITLE += with ALL module selected
-  DEPENDS+=+libpcre +nginx-ssl-util +zlib +liblua +libxml2 +libubus \
-	+libblobmsg-json +libjson-c +nginx-mod-ubus +nginx-mod-naxsi +nginx-mod-lua \
-	+nginx-mod-dav-ext +nginx-mod-stream +nginx-mod-headers-more +nginx-mod-brotli\
+  DEPENDS+=+libpcre +nginx-ssl-util +zlib +libxml2 \
+	+nginx-mod-ubus +nginx-mod-naxsi +nginx-mod-lua \
+	+nginx-mod-dav-ext +nginx-mod-stream +nginx-mod-headers-more +nginx-mod-brotli \
 	+nginx-mod-rtmp +nginx-mod-ts
   EXTRA_DEPENDS:=nginx-ssl-util (>=1.5-1) (<2)
   VARIANT:=all-module
