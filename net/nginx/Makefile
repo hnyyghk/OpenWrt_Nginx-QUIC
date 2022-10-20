@@ -8,10 +8,10 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=nginx
-PKG_VERSION:=1.23.1
+PKG_VERSION:=1.23.3
 PKG_RELEASE:=1
 
-PKG_SOURCE:=28fc35b71d75.tar.gz
+PKG_SOURCE:=91ad1abfb285.tar.gz
 PKG_SOURCE_URL:=https://hg.nginx.org/nginx-quic/archive/
 PKG_HASH:=skip
 
