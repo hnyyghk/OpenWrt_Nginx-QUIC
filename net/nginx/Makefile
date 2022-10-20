@@ -77,6 +77,7 @@ PKG_CONFIG_DEPENDS := \
 	CONFIG_NGINX_HTTP_BROTLI \
 	CONFIG_NGINX_RTMP_MODULE \
 	CONFIG_NGINX_TS_MODULE \
+	CONFIG_NGINX_NJS_MODULE \
 	CONFIG_NGINX_HTTP_AUTH_DIGEST \
 	CONFIG_OPENSSL_ENGINE \
 	CONFIG_OPENSSL_WITH_NPN
@@ -104,6 +105,7 @@ define Package/nginx/Default
 	+NGINX_HTTP_BROTLI:nginx-mod-brotli \
 	+NGINX_RTMP_MODULE:nginx-mod-rtmp \
 	+NGINX_TS_MODULE:nginx-mod-ts \
+	+NGINX_NJS_MODULE:nginx-mod-njs \
 	+NGINX_HTTP_AUTH_DIGEST:nginx-mod-auth-digest
 endef
 
@@ -368,6 +370,9 @@ endif
 ifeq ($(CONFIG_NGINX_TS_MODULE),y)
   ADDITIONAL_MODULES += --add-dynamic-module=$(PKG_BUILD_DIR)/nginx-ts
 endif
+ifeq ($(CONFIG_NGINX_NJS_MODULE),y)
+  ADDITIONAL_MODULES += --add-dynamic-module=$(PKG_BUILD_DIR)/nginx-njs/nginx
+endif
 ifeq ($(CONFIG_NGINX_HTTP_AUTH_DIGEST),y)
   ADDITIONAL_MODULES += --add-dynamic-module=$(PKG_BUILD_DIR)/nginx-auth-digest
 endif
@@ -580,6 +585,20 @@ define Prepare/nginx-ts
 	xzcat $(DL_DIR)/$(FILE) | tar -C $(PKG_BUILD_DIR) $(TAR_OPTIONS)
 endef
 
+define Download/nginx-njs
+  VERSION:=6af74b6c5e120595e11df74ca8749021e5f2a7e1
+  SUBDIR:=nginx-njs
+  FILE:=njs-$$(VERSION).tax.xz
+  URL:=https://github.com/nginx/njs.git
+  MIRROR_HASH:=skip
+  PROTO:=git
+endef
+
+define Prepare/nginx-njs
+	$(eval $(Download/nginx-njs))
+	xzcat $(DL_DIR)/$(FILE) | tar -C $(PKG_BUILD_DIR) $(TAR_OPTIONS)
+endef
+
 define Download/nginx-auth-digest
   VERSION:=b3073ef3624ec0e590671399e7b8f31458218d2a
   SUBDIR:=nginx-auth-digest
@@ -606,6 +625,9 @@ endif
 ifneq "$(or $(CONFIG_NGINX_RTMP_MODULE),$(QUILT))" ""
 	$(call PatchDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/rtmp-nginx,rtmp-nginx/)
 endif
+ifneq "$(or $(CONFIG_NGINX_NJS_MODULE),$(QUILT))" ""
+	$(call PatchDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/njs-nginx,njs-nginx/)
+endif
 	$(if $(QUILT),touch $(PKG_BUILD_DIR)/.quilt_used)
 endef
 
@@ -614,6 +636,7 @@ define Quilt/Refresh/Package
 	$(call Quilt/RefreshDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/dav-nginx,dav-nginx/)
 	$(call Quilt/RefreshDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/lua-nginx,lua-nginx/)
 	$(call Quilt/RefreshDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/rtmp-nginx,rtmp-nginx/)
+	$(call Quilt/RefreshDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/njs-nginx,njs-nginx/)
 endef
 
 define Build/Prepare
@@ -666,6 +689,11 @@ ifeq ($(CONFIG_NGINX_TS_MODULE),y)
   $(Prepare/nginx-ts)
 endif
 
+ifneq "$(or $(CONFIG_NGINX_NJS_MODULE),$(QUILT))" ""
+  $(eval $(call Download,nginx-njs))
+  $(Prepare/nginx-njs)
+endif
+
 ifeq ($(CONFIG_NGINX_HTTP_AUTH_DIGEST),y)
   $(eval $(call Download,nginx-auth-digest))
   $(Prepare/nginx-auth-digest)
@@ -705,4 +733,5 @@ $(eval $(call BuildModule,headers-more,Headers More,,ngx_http_headers_more_filte
 $(eval $(call BuildModule,brotli,Brotli,,ngx_http_brotli_filter_module.so ngx_http_brotli_static_module.so))
 $(eval $(call BuildModule,rtmp,RTMP,,ngx_rtmp_module.so))
 $(eval $(call BuildModule,ts,TS,,ngx_http_ts_module.so))
+$(eval $(call BuildModule,njs,NJS,,ngx_http_js_module.so ngx_stream_js_module.so))
 $(eval $(call BuildModule,auth-digest,HTTP auth digest,,ngx_http_auth_digest_module.so))

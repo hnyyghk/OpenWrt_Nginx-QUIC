@@ -1,0 +1,29 @@
+--- a/nginx-njs/auto/feature
++++ b/nginx-njs/auto/feature
+@@ -54,7 +54,7 @@ if [ -x $NJS_AUTOTEST ]; then
+             if /bin/sh -c "($NJS_AUTOTEST)" >> $NJS_AUTOCONF_ERR 2>&1; then
+                 echo >> $NJS_AUTOCONF_ERR
+                 njs_found=yes
+-                njs_feature_value=`$NJS_AUTOTEST`
++                njs_feature_value=`sed -ne 's/^e4VA0x\(.\)Y3pM$/\1/p' < $NJS_AUTOTEST`
+                 echo " $njs_feature_value"
+                 if [ -n "$njs_feature_name" ]; then
+                     cat << END >> $NJS_AUTO_CONFIG_H
+--- a/nginx-njs/auto/types
++++ b/nginx-njs/auto/types
+@@ -18,8 +18,14 @@ njs_feature_incs=
+ njs_feature_libs=
+ njs_feature_test="#include <stdio.h>
+ 
++                  char object_code_block[] = {
++                  	'\n', 'e', '4', 'V', 'A',
++                  	'0', 'x', ('0' + sizeof(int)),
++                  	'Y', '3', 'p', 'M', '\n'
++                  };
++
+                   int main() {
+-                      printf(\"%d\", (int) sizeof(int));
++                      printf(\"dummy use of object_code_block to avoid gc-section: %c\", object_code_block[0]);
+                       return 0;
+                   }"
+ . auto/feature
