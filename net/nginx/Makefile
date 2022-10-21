@@ -200,7 +200,7 @@ endef
 Package/nginx-ssl/conffiles = $(Package/nginx/conffiles)
 Package/nginx-all-module/conffiles = $(Package/nginx/conffiles)
 
-ADDITIONAL_MODULES:= --with-compat --with-http_ssl_module
+ADDITIONAL_MODULES:= --with-http_ssl_module
 config_files=mime.types
 
 ifeq ($(CONFIG_IPV6),y)
@@ -341,40 +341,40 @@ ifeq ($(CONFIG_NGINX_STREAM_QUIC_MODULE),y)
   ADDITIONAL_MODULES += --with-stream_quic_module
 endif
 ifeq ($(CONFIG_NGINX_STREAM_CORE_MODULE),y)
-  ADDITIONAL_MODULES += --with-stream=dynamic
+  ADDITIONAL_MODULES += --with-stream
 endif
 ifeq ($(CONFIG_NGINX_GEOIP2_MODULE),y)
-  ADDITIONAL_MODULES += --add-dynamic-module=$(PKG_BUILD_DIR)/nginx-geoip2-module
+  ADDITIONAL_MODULES += --add-module=$(PKG_BUILD_DIR)/nginx-geoip2-module
 endif
 ifeq ($(CONFIG_NGINX_UBUS),y)
-  ADDITIONAL_MODULES += --add-dynamic-module=$(PKG_BUILD_DIR)/nginx-ubus-module
+  ADDITIONAL_MODULES += --add-module=$(PKG_BUILD_DIR)/nginx-ubus-module
 endif
 ifeq ($(CONFIG_NGINX_NAXSI),y)
-  ADDITIONAL_MODULES += --add-dynamic-module=$(PKG_BUILD_DIR)/nginx-naxsi/naxsi_src
+  ADDITIONAL_MODULES += --add-module=$(PKG_BUILD_DIR)/nginx-naxsi/naxsi_src
 endif
 ifeq ($(CONFIG_NGINX_LUA),y)
-  ADDITIONAL_MODULES += --add-dynamic-module=$(PKG_BUILD_DIR)/lua-nginx
+  ADDITIONAL_MODULES += --add-module=$(PKG_BUILD_DIR)/lua-nginx
 endif
 ifeq ($(CONFIG_NGINX_DAV_EXT),y)
-  ADDITIONAL_MODULES += --add-dynamic-module=$(PKG_BUILD_DIR)/nginx-dav-ext-module
+  ADDITIONAL_MODULES += --add-module=$(PKG_BUILD_DIR)/nginx-dav-ext-module
 endif
 ifeq ($(CONFIG_NGINX_HEADERS_MORE),y)
-  ADDITIONAL_MODULES += --add-dynamic-module=$(PKG_BUILD_DIR)/nginx-headers-more
+  ADDITIONAL_MODULES += --add-module=$(PKG_BUILD_DIR)/nginx-headers-more
 endif
 ifeq ($(CONFIG_NGINX_HTTP_BROTLI),y)
-  ADDITIONAL_MODULES += --add-dynamic-module=$(PKG_BUILD_DIR)/nginx-brotli
+  ADDITIONAL_MODULES += --add-module=$(PKG_BUILD_DIR)/nginx-brotli
 endif
 ifeq ($(CONFIG_NGINX_RTMP_MODULE),y)
-  ADDITIONAL_MODULES += --add-dynamic-module=$(PKG_BUILD_DIR)/nginx-rtmp
+  ADDITIONAL_MODULES += --add-module=$(PKG_BUILD_DIR)/nginx-rtmp
 endif
 ifeq ($(CONFIG_NGINX_TS_MODULE),y)
-  ADDITIONAL_MODULES += --add-dynamic-module=$(PKG_BUILD_DIR)/nginx-ts
+  ADDITIONAL_MODULES += --add-module=$(PKG_BUILD_DIR)/nginx-ts
 endif
 ifeq ($(CONFIG_NGINX_NJS_MODULE),y)
-  ADDITIONAL_MODULES += --add-dynamic-module=$(PKG_BUILD_DIR)/nginx-njs/nginx
+  ADDITIONAL_MODULES += --add-module=$(PKG_BUILD_DIR)/nginx-njs/nginx
 endif
 ifeq ($(CONFIG_NGINX_HTTP_AUTH_DIGEST),y)
-  ADDITIONAL_MODULES += --add-dynamic-module=$(PKG_BUILD_DIR)/nginx-auth-digest
+  ADDITIONAL_MODULES += --add-module=$(PKG_BUILD_DIR)/nginx-auth-digest
 endif
 
 define Package/nginx-mod-luci
@@ -714,10 +714,7 @@ define BuildModule
   endef
 
   define Package/nginx-mod-$(1)/install
-	$(INSTALL_DIR) $$(1)/usr/modules
-	for so in $(4) ; do \
-		$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/modules/$$$$$$$$so $$(1)/usr/modules/ ; \
-	done
+	$(INSTALL_DIR) $(1)/usr/bin
   endef
 
   $$(eval $$(call BuildPackage,nginx-mod-$(1)))

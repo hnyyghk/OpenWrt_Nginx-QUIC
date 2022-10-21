@@ -6,8 +6,6 @@ worker_processes auto;
 
 user root;
 
-load_module /usr/modules/ngx_http_ubus_module.so;
-
 events {}
 
 http {
