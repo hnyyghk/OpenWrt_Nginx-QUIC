@@ -394,8 +394,8 @@ TARGET_CFLAGS += -fvisibility=hidden -ffunction-sections -fdata-sections -DNGX_L
 TARGET_LDFLAGS += -Wl,--gc-sections
 
 ifeq ($(CONFIG_NGINX_LUA),y)
-  CONFIGURE_VARS += LUA_INC=$(STAGING_DIR)/usr/include \
-					LUA_LIB=$(STAGING_DIR)/usr/lib
+  CONFIGURE_VARS += LUAJIT_INC=$(STAGING_DIR)/usr/include/luajit-2.1 \
+					LUAJIT_LIB=$(STAGING_DIR)/usr/lib
 endif
 
 CONFIGURE_VARS += CONFIG_BIG_ENDIAN=$(CONFIG_BIG_ENDIAN)
@@ -699,7 +699,7 @@ $(eval $(call BuildModule,stream,stream,,ngx_stream_module.so))
 $(eval $(call BuildModule,geoip2,geoip2,+libmaxminddb,ngx_http_geoip2_module.so ngx_stream_geoip2_module.so))
 $(eval $(call BuildModule,ubus,Ubus,+libubus +libblobmsg-json +libjson-c,ngx_http_ubus_module.so))
 $(eval $(call BuildModule,naxsi,NAXSI,,ngx_http_naxsi_module.so))
-$(eval $(call BuildModule,lua,LUA,+liblua,ngx_http_lua_module.so))
+$(eval $(call BuildModule,lua,LUA,+luajit,ngx_http_lua_module.so))
 $(eval $(call BuildModule,dav-ext,DAV-EXT,+libxml2,ngx_http_dav_ext_module.so))
 $(eval $(call BuildModule,headers-more,Headers More,,ngx_http_headers_more_filter_module.so))
 $(eval $(call BuildModule,brotli,Brotli,,ngx_http_brotli_filter_module.so ngx_http_brotli_static_module.so))
