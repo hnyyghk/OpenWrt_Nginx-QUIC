@@ -488,13 +488,13 @@ $(eval $(call BuildPackage,nginx-full))
 $(eval $(call BuildPackage,nginx-mod-luci))
 $(eval $(call BuildPackage,nginx-mod-lua-resty-lrucache))
 $(eval $(call BuildPackage,nginx-mod-lua-resty-core))
-$(eval $(call BuildModule,stream,+@NGINX_STREAM_CORE_MODULE, \
+$(eval $(call BuildModule,stream,, \
 	ngx_stream, Add support for NGINX request streaming.))
 $(eval $(call BuildModule,lua,+nginx-mod-lua-resty-core,ngx_http_lua, \
 	Enable Lua module (luajit2 based, OpenResty patches)))
-$(eval $(call BuildModule,ubus,+libubus +libjson-c +libblobmsg-json +@NGINX_UBUS, \
+$(eval $(call BuildModule,ubus,+libubus +libjson-c +libblobmsg-json, \
 	ngx_http_ubus,Enable UBUS api support directly from the server.))
-$(eval $(call BuildModule,dav-ext,+@NGINX_DAV +libxml2,ngx_http_dav_ext, \
+$(eval $(call BuildModule,dav-ext,+@NGINX_DAV,ngx_http_dav_ext, \
 	Enable the WebDAV methods PROPFIND OPTIONS LOCK UNLOCK.))
 $(eval $(call BuildModule,headers-more,,ngx_http_headers_more_filter, \
 	Set and clear input and output headers...more than "add"!))
@@ -506,7 +506,7 @@ $(eval $(call BuildModule,brotli,,ngx_http_brotli_filter ngx_http_brotli_static,
 	Add support for brotli compression module.))
 $(eval $(call BuildModule,naxsi,,ngx_http_naxsi, \
 	Enable NAXSI module.))
-$(eval $(call BuildModule,geoip2,+@NGINX_STREAM_CORE_MODULE +nginx-mod-stream +libmaxminddb,ngx_http_geoip2 ngx_stream_geoip2, \
+$(eval $(call BuildModule,geoip2,+nginx-mod-stream +libmaxminddb,ngx_http_geoip2 ngx_stream_geoip2, \
 	Enable MaxMind GeoIP2 module.))
 $(eval $(call BuildModule,njs,+zlib +libxml2 +libxslt +libpcre2,ngx_http_js, \
 	Enable NJS module.))
